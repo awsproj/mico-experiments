@@ -1,0 +1,17 @@
+
+
+repos to build the experimentation:
+imported to github apr 12 2020
+
+
+  mico-cube:   https://code.aliyun.com/mico/mico-cube.git
+
+  mico-demos : https://code.aliyun.com/mico/mico-demos.git
+  lib_nghttp2: https://code.aliyun.com/mico/nghttp2.git
+  mico-os    : https://code.aliyun.com/mico/mico-os.git
+
+  aws_iot    : https://code.aliyun.com/mico/aws_iot.git
+  lib_aws_iot: https://code.aliyun.com/mico/lib_aws_iot.git
+  lib_mqtt   : https://code.aliyun.com/mico/lib_mqtt.git
+
+
