@@ -1,0 +1,65 @@
+
+emw3060/log-2-boot-modes
+
+
+uart1 921600 8n1, user uart
+uart2 921600 8n1, debug uart
+
+
+bootloader: same as emw110
+  menu screen shows on both uarts, 
+  debug uart responds to user commands
+
+
+qc boot:  uart1
+
+==== MXCHIP Manufacture Test ====
+Serial Number: 0000.0000.A213
+App CRC: 1B72
+Bootloader Version: 1.1.0
+Library Version: moc108.004
+APP Version: MiCO basic_AT_v2.1.3, build at 13:48:06 Dec 14 2018
+Driver: moc108_wlan
+MAC: FC-EE-E6-1A-5E-BD
+Scan AP Success:
+  SSID: TestAP, RSSI: -44
+  SSID: DemoTesting2, RSSI: -45
+  SSID: , RSSI: -54
+  SSID: , RSSI: -54
+
+
+qc boot: uart 2
+
+[0][RTOS: mico_rtos_common.c:  84] Started MiCO RTOS interface for FreeRTOS v9.0.0
+
+
+ate boot: uart1, help command, version command
+
+EMW3060 ATE firmware, version V2.1.0, build at Aug 28 2018 10:59:17
+
+#
+# help
+
+====Build-in Commands====
+help:
+version:
+
+====User Commands====
+txevm: txevm [-m] [-c] [-l] [-r] [-w]
+rxsens: rxsens [-m] [-d] [-c] [-l]
+mac: mac <mac>, Get mac/Set mac. <mac>: c89346000001
+prov: prov
+lock: lock
+
+#
+# version
+
+YOS-R-20180828.1053
+
+
+ate boot: uart2
+
+DPLL Unlock
+app_init finished
+
+

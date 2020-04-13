@@ -1,0 +1,155 @@
+commit cacf834b4d3976194b2448eb548cbd606fe77d42
+Date:   Sat Apr 11 17:31:26 2020 -0700
+
+    temp change 6 user cli
+
+diff --git a/wifi/station/tcp_client.c b/wifi/station/tcp_client.c
+index 05b0aa0..ae242f6 100644
+--- a/wifi/station/tcp_client.c
++++ b/wifi/station/tcp_client.c
+@@ -40,6 +40,11 @@ static char tcp_remote_ip[16] = "192.168.2.1"; /*remote ip address*/
+ static int tcp_remote_port = 8000; /*remote port*/
+ static mico_semaphore_t wait_sem = NULL;
+ 
++static int tcp_client_test_enabled_last = 0;
++int tcp_client_test_enabled = 0;
++
++static int wifi_up = 0;
++
+ static void micoNotify_WifiStatusHandler( WiFiEvent status, void* const inContext )
+ {
+     IPStatusTypedef para;
+@@ -50,10 +55,17 @@ static void micoNotify_WifiStatusHandler( WiFiEvent status, void* const inContex
+             tcp_client_log( "Wlan connected, Local ip address: %s", para.ip );
+             if (wait_sem != NULL)
+                 mico_rtos_set_semaphore(&wait_sem);
++            wifi_up = 1;
+             break;
+         case NOTIFY_STATION_DOWN:
+         case NOTIFY_AP_UP:
+         case NOTIFY_AP_DOWN:
++            tcp_client_log( "Wlan disconnected");
++            wifi_up = 0;
++            break;
++        default:
++            tcp_client_log( "Wlan unknown event");
++            wifi_up = 0;
+             break;
+     }
+ }
+@@ -75,6 +87,26 @@ void tcp_client_thread( mico_thread_arg_t arg )
+ 
+   while(1)
+   {
++    while(1) {
++        if (tcp_client_test_enabled) {
++            mico_thread_sleep( 1 );
++            if (tcp_client_test_enabled_last == 0) {
++                tcp_client_log( "tcp_client test enabled now..." );
++                tcp_client_test_enabled_last = 1; /* record enabled */
++            }
++            break;
++        } else {
++            if (tcp_client_test_enabled_last) {
++                tcp_client_log( "tcp_client test disabled now..." );
++                tcp_client_test_enabled_last = 0; /* record disabled */
++            }
++        }
++        mico_thread_sleep( 1 );
++    }
++    if ( wifi_up == 0 ) {
++        tcp_client_log( "tcp_client test continue due to wifi_up not right..." );
++        continue;
++    }
+     tcp_fd = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
+     require_action( IsValidSocket( tcp_fd ), exit, err = kNoResourcesErr );
+ 
+@@ -102,7 +134,7 @@ void tcp_client_thread( mico_thread_arg_t arg )
+         if ( FD_ISSET( tcp_fd, &readfds ) )
+         {
+             len = recv( tcp_fd, buf, 1024 * 2, 0 );
+-            require_action( len >= 0, exit, err = kConnectionErr );
++            require_action( len >= 0, exit2, err = kConnectionErr );
+ 
+             if ( len == 0 )
+             {
+@@ -169,6 +201,7 @@ int tcp_client_application_start( void )
+     mico_rtos_delete_thread( NULL );
+     #endif
+     wait_sem = NULL;
++    tcp_client_log( "wifi started" );
+     return err;
+ }
+ 
+diff --git a/wifi/station/user_cli.c b/wifi/station/user_cli.c
+new file mode 100644
+index 0000000..8e00db0
+--- /dev/null
++++ b/wifi/station/user_cli.c
+@@ -0,0 +1,28 @@
++/*
++ * user-cli.c
++ */
++
++extern int tcp_client_test_enabled;
++
++static void user_debug_Command(char *pcWriteBuffer, int xWriteBufferLen, 
++                                int argc, char **argv)
++{
++  if (argc == 1) {
++    cmd_printf("Usage: userdebug on/off. tcp_client_test_enabled is currently %s\r\n",
++               tcp_client_test_enabled ? "Enabled" : "Disabled");
++    return;
++  }
++  
++  if (!strcasecmp(argv[1], "on")) {
++    cmd_printf("Enable tcp_client_test_enabled\r\n");
++    tcp_client_test_enabled = 1;
++  } else if (!strcasecmp(argv[1], "off")) {
++    cmd_printf("Disable tcp_client_test_enabled\r\n");
++    tcp_client_test_enabled = 0;
++  }
++}
++
++static const struct cli_command tcp_client_user_clis[1] = {
++  {"userdebug", "userdebug command", user_debug_Command},
++};
++
+diff --git a/wifi/station/wifi_station_core_api.c b/wifi/station/wifi_station_core_api.c
+index 7ec7c08..f6a5f66 100644
+--- a/wifi/station/wifi_station_core_api.c
++++ b/wifi/station/wifi_station_core_api.c
+@@ -30,6 +30,7 @@
+  */
+ 
+ #include "mico.h"
++#include "mico_system.h" /* cli_init(). MICOCli.h is for sdk 2.2.0 or earlier */
+ 
+ #define wifi_station_log(M, ...) custom_log("WIFI-station-core", M, ##__VA_ARGS__)
+ 
+@@ -52,12 +53,25 @@ static void micoNotify_WifiStatusHandler(WiFiEvent event,  void* inContext)
+     break;
+   }
+ }
++
++#include "user_cli.c"
+ int application_start( void )
+ {
+   OSStatus err = kNoErr;
+   network_InitTypeDef_adv_st  wNetConfigAdv;
+ 
+   MicoInit( );
++
++  /* MicoCliInit() is for sdk 2.2.0 and earlier. 
++   * 2.3.0 already in mico_system_init(mico_context). 
++   * CLI_UART is defined in mico-os/board/MK110A/platform.h 
++   * uart is initialized at mico-os/MiCO/system/command_console/mico_cli.c:MicoUartInitialize()
++   * command is defined in mico_cli.h 
++   * int cli_register_commands(const struct cli_command *commands, int num_commands)
++   * refer to mico-os/MiCO/command_console/mico_cli.c for more information
++   */
++  cli_init();
++  cli_register_commands(tcp_client_user_clis, 1);
+   
+   /* scan */
+   extern int wifi_scan_application_start( void );

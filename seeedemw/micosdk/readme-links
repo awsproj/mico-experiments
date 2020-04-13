@@ -1,0 +1,32 @@
+
+http://developer.mxchip.com/handbooks
+
+
+http://developer.mxchip.com/downloads
+
+    1. download mico sdk
+    2. download micoder ide
+    3. download micoder tools
+    4. download easylink sdk
+    5. at 2.0 transparent firmware
+    6. at 1.0 transparent firmware
+
+http://developer.mxchip.com/downloads/22
+
+    moc108/emw3060  v2.1.3 basic at : moc108_0000.0000.a213.zip 115200 bps
+    moc108/emw110a  v2.1.2 basic at : moc108a_000.0000.a212.zip 115200 bps
+        http://docs.mxchip.com/docs/AT/atbin/MOC108A_0000.0000.A212.zip
+
+
+
+EMW110 firmware: 
+extracted/MOC108A_0000.0000.A212/MOC108A_obtain_burn_method.txt
+
+    How to download ota.bin through bootloader order: 
+
+    1. Use user uart, enter boot mode, boot pin pull low, press chip_en key, baud rate 921600bps
+    2. Enter command: erase 0x13200 0x100000 , return, wait when erasing finhes a $ will appear. 
+    3. Enter command:  write 0x13200 , return, choose send ymodem, choose ota.bin , it will update. 
+    4. Use user uart, status pin pull low, 921600, enter into qc log, verify firmware version and crc value. 
+
+

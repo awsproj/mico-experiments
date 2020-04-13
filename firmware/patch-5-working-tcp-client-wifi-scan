@@ -1,0 +1,254 @@
+commit 137787515b7aa0e3e295c8e87532976b9eff88ae
+Date:   Sat Apr 11 15:59:05 2020 -0700
+
+    temp change 5 working tcp-client and wifi-scan
+
+diff --git a/wifi/station/station.mk b/wifi/station/station.mk
+index 6d681e9..3d840a2 100644
+--- a/wifi/station/station.mk
++++ b/wifi/station/station.mk
+@@ -27,4 +27,6 @@ NAME := App_wifi_station
+ $(NAME)_SOURCES := wifi_station_core_api.c
+ #$(NAME)_SOURCES := wifi_station_system_api.c
+ 				      
++$(NAME)_SOURCES += tcp_client.c
++$(NAME)_SOURCES += wifi_scan.c
+ 
+diff --git a/wifi/station/tcp_client.c b/wifi/station/tcp_client.c
+index de8d66f..05b0aa0 100644
+--- a/wifi/station/tcp_client.c
++++ b/wifi/station/tcp_client.c
+@@ -32,17 +32,22 @@
+ #include "mico.h"
+ #include "SocketUtils.h"
+ 
+-#define tcp_client_log(M, ...) custom_log("TCP", M, ##__VA_ARGS__)
++#define tcp_client_log(M, ...) custom_log("TCP-client", M, ##__VA_ARGS__)
+ 
+-static char tcp_remote_ip[16] = "192.168.3.53"; /*remote ip address*/
+-static int tcp_remote_port = 6000; /*remote port*/
++#define DUMMY_SEND_LEN (1400) /* 0 to echo back. non-zero to send the n bytes */
++
++static char tcp_remote_ip[16] = "192.168.2.1"; /*remote ip address*/
++static int tcp_remote_port = 8000; /*remote port*/
+ static mico_semaphore_t wait_sem = NULL;
+ 
+ static void micoNotify_WifiStatusHandler( WiFiEvent status, void* const inContext )
+ {
++    IPStatusTypedef para;
+     switch ( status )
+     {
+         case NOTIFY_STATION_UP:
++            micoWlanGetIPStatus( &para, Station );
++            tcp_client_log( "Wlan connected, Local ip address: %s", para.ip );
+             if (wait_sem != NULL)
+                 mico_rtos_set_semaphore(&wait_sem);
+             break;
+@@ -65,9 +70,11 @@ void tcp_client_thread( mico_thread_arg_t arg )
+     int tcp_fd = -1, len;
+     char *buf = NULL;
+ 
+-    buf = (char*) malloc( 1024 );
++    buf = (char*) malloc( 1024 * 2 );
+     require_action( buf, exit, err = kNoMemoryErr );
+ 
++  while(1)
++  {
+     tcp_fd = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
+     require_action( IsValidSocket( tcp_fd ), exit, err = kNoResourcesErr );
+ 
+@@ -77,7 +84,7 @@ void tcp_client_thread( mico_thread_arg_t arg )
+ 
+     tcp_client_log( "Connecting to server: ip=%s  port=%d!", tcp_remote_ip,tcp_remote_port );
+     err = connect( tcp_fd, (struct sockaddr *)&addr, sizeof(addr) );
+-    require_noerr( err, exit );
++    require_noerr( err, exit2 );
+     tcp_client_log( "Connect success!" );
+     
+     t.tv_sec = 2;
+@@ -88,26 +95,40 @@ void tcp_client_thread( mico_thread_arg_t arg )
+         FD_ZERO( &readfds );
+         FD_SET( tcp_fd, &readfds );
+ 
+-        require_action( select( tcp_fd + 1, &readfds, NULL, NULL, &t) >= 0, exit,
++        require_action( select( tcp_fd + 1, &readfds, NULL, NULL, &t) >= 0, exit2,
+                         err = kConnectionErr );
+ 
+         /* recv wlan data, and send back */
+         if ( FD_ISSET( tcp_fd, &readfds ) )
+         {
+-            len = recv( tcp_fd, buf, 1024, 0 );
++            len = recv( tcp_fd, buf, 1024 * 2, 0 );
+             require_action( len >= 0, exit, err = kConnectionErr );
+ 
+             if ( len == 0 )
+             {
+                 tcp_client_log( "TCP Client is disconnected, fd: %d", tcp_fd );
+-                goto exit;
++                goto exit2;
+             }
+ 
+             tcp_client_log("Client fd: %d, recv data %d", tcp_fd, len);
++            #if defined(DUMMY_SEND_LEN) && (DUMMY_SEND_LEN)
++            if ( DUMMY_SEND_LEN > 0 && DUMMY_SEND_LEN < 1024 * 2 && 
++                                                len < DUMMY_SEND_LEN) {
++                len = DUMMY_SEND_LEN;
++            }
++            #endif
+             len = send( tcp_fd, buf, len, 0 );
+             tcp_client_log("Client fd: %d, send data %d", tcp_fd, len);
+         }
+     }
++    exit2:
++        tcp_client_log( "This is thread tcp_client... close fd: %d", tcp_fd);
++        err = close(tcp_fd);
++        require_noerr_string( err, exit, "Error close tcp_fd");
++
++        tcp_client_log( "This is thread tcp_client... sleep 20" );
++        mico_thread_sleep( 20 );
++  }
+ 
+     exit:
+     if ( err != kNoErr ) tcp_client_log( "TCP client thread exit with err: %d", err );
+@@ -116,7 +137,7 @@ void tcp_client_thread( mico_thread_arg_t arg )
+     mico_rtos_delete_thread( NULL );
+ }
+ 
+-int application_start( void )
++int tcp_client_application_start( void )
+ {
+     OSStatus err = kNoErr;
+ 
+@@ -128,8 +149,10 @@ int application_start( void )
+     require_noerr( err, exit );
+ 
+     /* Start MiCO system functions according to mico_config.h */
++    #if 0
+     err = mico_system_init( mico_system_context_init( 0 ) );
+     require_noerr( err, exit );
++    #endif
+ 
+     /* Wait for wlan connection*/
+     mico_rtos_get_semaphore( &wait_sem, MICO_WAIT_FOREVER );
+@@ -142,7 +165,10 @@ int application_start( void )
+     exit:
+     if ( wait_sem != NULL )
+         mico_rtos_deinit_semaphore( &wait_sem );
++    #if 0
+     mico_rtos_delete_thread( NULL );
++    #endif
++    wait_sem = NULL;
+     return err;
+ }
+ 
+diff --git a/wifi/station/wifi_scan.c b/wifi/station/wifi_scan.c
+index b0e9cc0..fd25be0 100644
+--- a/wifi/station/wifi_scan.c
++++ b/wifi/station/wifi_scan.c
+@@ -31,32 +31,65 @@
+ 
+ #include "mico.h"
+ 
+-#define wifi_scan_log(M, ...) custom_log("WIFI", M, ##__VA_ARGS__)
++#define wifi_scan_log(M, ...) custom_log("WIFI-scan", M, ##__VA_ARGS__)
++
++static unsigned int scan_count_start = 0;
++static unsigned int scan_count_finish = 0;
+ 
+ static void micoNotify_ApListCallback(ScanResult *pApList)
+ {
+   int i=0;
+-  wifi_scan_log("got %d AP", pApList->ApNum);
++  wifi_scan_log("Scan got %d AP", pApList->ApNum);
+   for(i=0; i<pApList->ApNum; i++)
+   {
+     wifi_scan_log("ap%d: name = %s  | strenth=%ddbm",
+                   i,pApList->ApList[i].ssid, pApList->ApList[i].rssi);
+ 
+   }
++  scan_count_finish ++;
++  wifi_scan_log("Scan finish counts %u %u", scan_count_start, scan_count_finish);
+ }
+ 
+-int application_start( void )
++int wifi_scan_application_start( void )
+ {
+   /* Start MiCO system functions according to mico_config.h*/
++  #if 0
+   mico_system_init( mico_system_context_init( 0 ) );
++  #endif
++
++  scan_count_start = 0;
++  scan_count_finish = 0;
+   
+   /* Register user function when wlan scan is completed */
+   mico_system_notify_register( mico_notify_WIFI_SCAN_COMPLETED, (void *)micoNotify_ApListCallback, NULL );
+   
+-  wifi_scan_log("start scan mode, please wait...");
++  wifi_scan_log("Start scan mode, please wait...");
++  scan_count_start ++;
+   micoWlanStartScan( );
++
++  unsigned int i = 0;
++  for ( i=1; i<=20; i++ ) {
++    if (scan_count_start == scan_count_finish) {
++      break;
++    }
++    mico_thread_sleep( 1 );
++  }
++  wifi_scan_log("Scan finished at second %u.", i);
++  wifi_scan_log("Start scan mode, please wait...");
++  scan_count_start ++;
++  micoWlanStartScan( );
++
++  for ( i=1; i<=20; i++ ) {
++    if (scan_count_start == scan_count_finish) {
++      break;
++    }
++    mico_thread_sleep( 1 );
++  }
++  wifi_scan_log("Scan finished at second %u.", i);
+   
++  #if 0
+   mico_rtos_delete_thread( NULL );
++  #endif
+   return kNoErr;
+ }
+ 
+diff --git a/wifi/station/wifi_station_core_api.c b/wifi/station/wifi_station_core_api.c
+index f251249..7ec7c08 100644
+--- a/wifi/station/wifi_station_core_api.c
++++ b/wifi/station/wifi_station_core_api.c
+@@ -31,7 +31,7 @@
+ 
+ #include "mico.h"
+ 
+-#define wifi_station_log(M, ...) custom_log("WIFI-station", M, ##__VA_ARGS__)
++#define wifi_station_log(M, ...) custom_log("WIFI-station-core", M, ##__VA_ARGS__)
+ 
+ static void micoNotify_ConnectFailedHandler(OSStatus err, void* inContext)
+ {
+@@ -59,6 +59,10 @@ int application_start( void )
+ 
+   MicoInit( );
+   
++  /* scan */
++  extern int wifi_scan_application_start( void );
++  wifi_scan_application_start( );
++  
+   /* Register user function when wlan connection status is changed */
+   err = mico_system_notify_register( mico_notify_WIFI_STATUS_CHANGED, (void *)micoNotify_WifiStatusHandler, NULL );
+   require_noerr( err, exit ); 
+@@ -80,6 +84,12 @@ int application_start( void )
+   /* Connect Now! */
+   wifi_station_log("connecting to %s...", wNetConfigAdv.ap_info.ssid);
+   micoWlanStartAdv(&wNetConfigAdv);
++  wifi_station_log("connecting to %s... started.", wNetConfigAdv.ap_info.ssid);
++
++  /* tcp client */
++  extern int tcp_client_application_start( void );
++  err = tcp_client_application_start();
++  require_noerr( err, exit );
+   
+ exit:
+   return err;

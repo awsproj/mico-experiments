@@ -1,0 +1,397 @@
+
+
+content table
+    mico-cube and other sources
+    mico-cube basic
+    micoder tools
+    mico ide sdk
+    pip list
+    mico import helloworld
+    build helloworld
+    build aws_iot
+    build github fog_v2:
+    find demo build instructions
+    build demos
+    build aws_iot again
+
+
+mico-cube and other sources
+
+  mentioned in the README.md of mico-demos repo for 1.0.12 version
+    mico-cube: https://code.aliyun.com/mico/mico-cube.git
+    current installed version is 1.0.17 download from https://pypi.org/project/mico-cube
+
+  mico-demos:  https://code.aliyun.com/mico/mico-demos.git
+  lib_nghttp2: https://code.aliyun.com/mico/nghttp2.git
+  mico-os:     https://code.aliyun.com/mico/mico-os.git
+
+  aws_iot    : https://code.aliyun.com/mico/aws_iot.git
+  lib_aws_iot: https://code.aliyun.com/mico/lib_aws_iot.git
+  lib_mqtt   : https://code.aliyun.com/mico/lib_mqtt.git
+
+  git annoying cr-lf madness: 
+    whitespace = cr-at-eol
+    fileMode = false
+    filemode = false
+
+
+mico-cube basics
+
+  link: http://developer.mxchip.com/handbooks/102 MiCO Cube reference manual
+
+  python: Use 2.7.13, not python 3. 
+  git: 1.9.5 or higher
+
+  mico workspace: 
+    $ cd mico-example-program
+    $ cd mico-os
+    $ git checkout mico-os-3.5  # Switch branch to mico-os-3.5
+    Previous HEAD position was 6949563... Merge branch 'master' into mico-os-3.5 
+    Switch to a new branch 'mico-os-3.5'
+    Branch mico-os-3.5 set up to track remote branch mico-os-3.5 from origin.
+    
+    $ mico update   # This will update "mico-os" to latest version, not "mico-example-program"
+    [mico]Updating library "mico-os" to latest revision in the current branch.
+    
+    OR 
+    $ mico update 3.5.x  # This will update "mico-os" to the designated version
+    [mico]Updating library "mico-os" to branch 3.5.x
+
+  commands: 
+    mico new .            -- change the current directory into a workspace root
+    mico import <...>     -- checkout and make it a workspace root
+
+  meta file suffixes: 
+    .component            -- dependencies links
+    .code                 -- optional dependencies links
+                          -- use `mico sync` to update them.
+
+  example: create a new program: 
+    $ mico new mico-os-program -v -vv
+    $ cd mico-os-program
+    $ mico ls -a
+
+  example: create a new program from github: 
+    $ git clone https://github.com/abcd/efgh
+    $ cd efgh
+    $ mico new .
+
+  example: add or remove a component
+    $ mico add https://code.aliyun.com/mico/Lib_aws.git
+    OR
+    $ mico add https://code.aliyun.com/mico/Lib_aws.git/#e5a0dcb43ecc
+
+    $ mico remove <...>
+
+  example: set MiCoder Tools path
+    $ mico config --global MICODER ~/MiCO_SDK/MiCO/MiCoder
+    $ mico config --list
+
+    Windows cmd: 
+    mico config --global MICODER C:\micosdk\MiCoder_v1.3_Win32_64\MiCoder
+  
+  example: compile 
+    $ mico make helloworld@MK3165
+
+
+micoder tools
+
+  link: http://developer.mxchip.com/downloads/25 MiCoder Tools
+
+  version v1.3  system windows 64-bit  download MiCoder_v1.3.Win32_64.zip 
+                                       jlink driver: jlink driver update...
+                system mac os x ...
+  historical versions: 
+    before named mxos please use 
+    v1.1 supports MiCO v3.0.0 and above
+                system windows 64-bit  download MiCoder_v1.1.Win32.zip
+                                       jlink driver: jlink driver update...
+                mac os x ...
+                linux ...
+
+  install 1.3 to \micosdk\MiCoder_v1.3_Win32_64\
+    so that it contains a MiCoder directory. 
+
+  install 1.1 to \micosdk\MiCoder_v1.1_Win32_64\
+  download 1.1 for linux from http://firmware.mxchip.com/MiCoder_v1.1.Linux.tar.gz
+
+
+mico ide sdk
+
+  downloaded installer file MiCoder_IDE_1_2_1_Win32_x64.exe 
+  install the ide to \micosdk\MXCHIP\
+  install the sdk to \micosdk\MiCO_SDK\           
+
+
+pip list
+mico-cube 1.0.17
+
+
+mico import helloworld -v -vv
+
+    C:\Users\yourproject\micotest>mico import helloworld -v -vv
+    [mico] Working path "C:\Users\yourproject\micotest" (directory)
+    [mico] Importing program "helloworld" from "https://code.aliyun.com/mico/helloworld.git" at latest revision in the current branch
+    [mico] Exec "git clone https://code.aliyun.com/mico/helloworld.git C:\Users\yourproject\micotest\helloworld -v" in C:\Users\yourproject\micotest
+    Cloning into 'C:\Users\yourproject\micotest\helloworld'...
+    POST git-upload-pack (175 bytes)
+    remote: Counting objects: 88, done.
+    remote: Total 88 (delta 27), reused 88 (delta 27)
+    Unpacking objects: 100% (88/88), done.
+    [mico] Query "git remote -v" in C:\Users\yourproject\micotest\helloworld
+    origin  https://code.aliyun.com/mico/helloworld.git (fetch)
+    origin  https://code.aliyun.com/mico/helloworld.git (push)
+    [mico] Query "git rev-parse HEAD" in C:\Users\yourproject\micotest\helloworld
+    0e09cc209d453d7d9fc43ebe1a8983a8bb044214
+    [mico] Query "git remote -v" in C:\Users\yourproject\micotest\helloworld
+    origin  https://code.aliyun.com/mico/helloworld.git (fetch)
+    origin  https://code.aliyun.com/mico/helloworld.git (push)
+    [mico] Query "git rev-parse HEAD" in C:\Users\yourproject\micotest\helloworld
+    0e09cc209d453d7d9fc43ebe1a8983a8bb044214
+    [mico] Adding component "mico-os" from "https://code.aliyun.com/mico/mico-os.git" at rev #4c7cb5aceb94
+    [mico] Exec "git clone https://code.aliyun.com/mico/mico-os.git C:\Users\yourproject\micotest\helloworld\mico-os -v" in C:\Users\yourproject\micotest\helloworld
+    Cloning into 'C:\Users\yourproject\micotest\helloworld\mico-os'...
+    POST git-upload-pack (gzip 2925 to 1522 bytes)
+    remote: Counting objects: 49694, done.
+    remote: Total 49694 (delta 14415), reused 49575 (delta 14415)
+    Receiving objects: 100% (49694/49694), 942.64 MiB | 1.86 MiB/s, done.
+    Resolving deltas: 100% (14415/14415), done.
+    Checking out files: 100% (7058/7058), done.
+    [mico] Query "git rev-parse HEAD" in C:\Users\yourproject\micotest\helloworld\mico-os
+    9b09de78164940ff3876d2053f8e7dd42ca2b8ba
+    [mico] Checkout "4c7cb5aceb944dff9e5030fe0d1b601acf2b047d" in mico-os
+    [mico] Query "git show-ref" in C:\Users\yourproject\micotest\helloworld\mico-os
+    9b09de78164940ff3876d2053f8e7dd42ca2b8ba refs/heads/master
+    9b09de78164940ff3876d2053f8e7dd42ca2b8ba refs/remotes/origin/HEAD
+    0f8c7063658649c68f804f33d83a602055f74a39 refs/remotes/origin/SCX1701
+    f89172a0fbc1b6639a195065e84dc4befd93d47b refs/remotes/origin/bat
+    a97538a9c0bf30239845acf98ebd24ef69862385 refs/remotes/origin/bug_3080_gtimer
+    4665951f63b5a3fe87204066cc61d0d53784379a refs/remotes/origin/bug_moc108_uart_lost
+    18a73da99ce050e1c60de99e3cdedff2739299b4 refs/remotes/origin/bug_mx108_libraries
+    cd0c62c69d8ccf6d5e749e846c0f0b621fb36350 refs/remotes/origin/dev-7105
+    26086b2f2134ef7ccdd136297463e3c033786a30 refs/remotes/origin/dev-7105-softap
+    1ff6281dc6ecf98ca65c0498fe967ddfbd8f173f refs/remotes/origin/dev_3060_xz_ota
+    353ebc41d3395f2a20c019ade71958b49718582f refs/remotes/origin/dev_3080_custom_spi
+    65c87910de0c14e22f23878ca9c2fb63e0a63d7d refs/remotes/origin/dev_3080_rsa
+    2359cee92245276e7b18fcb97a7bc7bf3e082a2f refs/remotes/origin/dev_3080_uart_dma_disable
+    2fc1849627dea1535bf49cbb037db1804d288587 refs/remotes/origin/dev_baidu
+    5de7903e28c02d3a09403ac6462082a34a1dac59 refs/remotes/origin/dev_bl2bx
+    c08977d28a8a5e014219ade09dfddc7f562e4e5b refs/remotes/origin/dev_bx
+    c3702c2036c93ad0baf00f7e5faf11cf09e5f7b3 refs/remotes/origin/dev_for_meituan
+    90c638e77b61f28a02ad866304d2de4f30a9d4f1 refs/remotes/origin/dev_for_zoehoo
+    76538d84f78a0e7b80a347d745fc6a8a8894558e refs/remotes/origin/dev_hike
+    8fd48a446c402ea842aaed36bf81ab9bb69ea957 refs/remotes/origin/dev_linkkit
+    898d810cff4235e3f2c860f2a7e825b50c1b028c refs/remotes/origin/dev_mk5062
+    6148811d295cdba6041d90c41e25cf4a4fed4827 refs/remotes/origin/dev_moc108
+    fb8a6e310f902a81015b0f8425c3ce2feb982802 refs/remotes/origin/dev_moc108ps
+    f51ad0bd379b13102577bd4b93c072118a03da1f refs/remotes/origin/dev_moc109
+    7fe001295a6e5c04f435e7924acf7e30b818d3d4 refs/remotes/origin/dev_sn
+    cc079ff9d6d26655f5422a00b8c37ba83678a1c1 refs/remotes/origin/dev_spi
+    4f9d8a5501a5189f52b727f9dea8af13cc63e61b refs/remotes/origin/dev_vbs8000_3.6
+    0306b2d2263d67ff9f35d7c1f1f24dfd1cdd86bf refs/remotes/origin/emw3290
+    0f45eb541d6a3ef7387f3ba749a27cbd1b08a514 refs/remotes/origin/for_3060_FeiYan
+    ba3f0b1a83a82959ad971ea44b54c86fb217ae6e refs/remotes/origin/for_FeiYan_gpio
+    e4c5ec14bf0f03b0efe389ab03a28ac176169e68 refs/remotes/origin/jd10-mx
+    df093cbcadb91b20f82916ec1b0d9c865f1475e7 refs/remotes/origin/kv
+    8095080843a0038f1e799185d284c1207482eb32 refs/remotes/origin/linkkit
+    9b09de78164940ff3876d2053f8e7dd42ca2b8ba refs/remotes/origin/master
+    139a84a9ba304f44fb3a3429ec257e45db4d46f5 refs/remotes/origin/mico-os-3.5
+    5516a40999dc9ee5aa903b90640b49f5d489ebb5 refs/remotes/origin/mico-os-3.5-filesystem
+    c403ea5aa1ae26a36a81b90938e4c9830221de97 refs/remotes/origin/mico-os-3.6
+    962f2ad2b41dc5a19e86bf2ed0178389aebb573e refs/remotes/origin/mico-os-3.6-3162-nvram
+    df2227842a180fc8bbbc6b143ad9d5b4a169d336 refs/remotes/origin/mico-os-3.6-352
+    6a9b4a3942d85f9d18e6d5c3329c1927e07fbb5b refs/remotes/origin/mico-os-3.6-7105
+    87777c3211cc3bb977050dbe301983680d8ef7b1 refs/remotes/origin/mico-os-3.6-aws_softap
+    7d5876959c5ac97380fe4baaa8e6291633c6a310 refs/remotes/origin/mico-os-3.6-moc108-dev
+    59a15f0dbf452bf66a52c0dcaa1d183f01d58b3f refs/remotes/origin/mico-os-4.0
+    5d1fcffee0ced9e62ba2a466922512b62c989efe refs/remotes/origin/mico-os-hw
+    1178f6c8a5e31bdf2536999e5becde4553b49f29 refs/remotes/origin/miio_mico-os-3.6
+    35c7247ccd717f98b8f750cc00e4d97966a602a6 refs/remotes/origin/scx1701_427
+    b6ef8fecc542092b809c417ac3e5a1a20181af8d refs/remotes/origin/sengled
+    de3acfff4dda03dcbca9c8a68c8afc3ffe6dc1b0 refs/tags/3.5.0
+    ca8c9f64056e23600813e902482f87a7c05d3489 refs/tags/3.5.1
+    e2480bbbce1176132f70bcab936860634255b1a1 refs/tags/3.5.2
+    cd4cb5ecd2b145b02996d5ff287d1e233e28e464 refs/tags/3.5.3
+    cd18736ee81bd04f21bfa72fcf3b49499099977d refs/tags/3.5.4
+    679b2819b5cc564f8d8c8b1142466451bd720fe0 refs/tags/3.6.0
+    5a7d8423f093fba1a53595aa35753fc2bce70811 refs/tags/3.6.1
+    f5640bafcf89508c9c0ad9fff787841758624f97 refs/tags/3.6.2
+    ba3b05e9d23858db51b6ac4c59ccc1448e9db862 refs/tags/3.6.3
+    21a595ba5f27045c0fe5716b8311da6880dd1612 refs/tags/3.6.4
+    2e474de7a30d3508d52be528dd91eeed367ec7a7 refs/tags/latest
+    [mico] Exec "git checkout 4c7cb5aceb944dff9e5030fe0d1b601acf2b047d -f" in C:\Users\yourproject\micotest\helloworld\mico-os
+    Note: checking out '4c7cb5aceb944dff9e5030fe0d1b601acf2b047d'.
+    
+    You are in 'detached HEAD' state. You can look around, make experimental
+    changes and commit them, and you can discard any commits you make in this
+    state without impacting any branches by performing another checkout.
+    
+    If you want to create a new branch to retain commits you create, you may
+    do so (now or later) by using -b with the checkout command again. Example:
+    
+      git checkout -b <new-branch-name>
+    
+    HEAD is now at 4c7cb5ac... Update template
+    [mico] Query "git remote -v" in C:\Users\yourproject\micotest\helloworld\mico-os
+    origin  https://code.aliyun.com/mico/mico-os.git (fetch)
+    origin  https://code.aliyun.com/mico/mico-os.git (push)
+    [mico] Query "git rev-parse HEAD" in C:\Users\yourproject\micotest\helloworld\mico-os
+    4c7cb5aceb944dff9e5030fe0d1b601acf2b047d
+    [mico] Query "git remote -v" in C:\Users\yourproject\micotest\helloworld\mico-os
+    origin  https://code.aliyun.com/mico/mico-os.git (fetch)
+    origin  https://code.aliyun.com/mico/mico-os.git (push)
+    [mico] Query "git rev-parse HEAD" in C:\Users\yourproject\micotest\helloworld\mico-os
+    4c7cb5aceb944dff9e5030fe0d1b601acf2b047d
+    
+    C:\Users\yourproject\micotest>
+
+
+build helloworld
+  the head contains origin/mico-os-4.0
+
+  windows cmd: it fails. 
+
+    mico make helloworld@MK110A
+
+  cygwin update ref: 
+
+    $ git reflog
+    4c7cb5ac (HEAD) HEAD@{0}: checkout: moving from master to 4c7cb5aceb944dff9e5030fe0d1b601acf2b047d
+    9b09de78 (origin/master, origin/HEAD, master) HEAD@{1}: clone: from https://code.aliyun.com/mico/mico-os.git
+
+    $ git log -1
+    commit 4c7cb5aceb944dff9e5030fe0d1b601acf2b047d (HEAD)
+    Date:   Thu May 10 14:49:04 2018 +0800
+        Update template
+
+    $ git reflog
+    c403ea5a (HEAD -> mico-os-3.6, origin/mico-os-3.6) HEAD@{0}: checkout: moving from mico-os-4.0 to mico-os-3.6
+    59a15f0d (origin/mico-os-4.0, mico-os-4.0) HEAD@{1}: checkout: moving from master to mico-os-4.0
+    9b09de78 (origin/master, origin/HEAD, master) HEAD@{2}: checkout: moving from working-helloworld to master
+    4c7cb5ac (working-helloworld) HEAD@{3}: checkout: moving from 4c7cb5aceb944dff9e5030fe0d1b601acf2b047d to working-helloworld
+    4c7cb5ac (working-helloworld) HEAD@{4}: checkout: moving from master to 4c7cb5aceb944dff9e5030fe0d1b601acf2b047d
+    9b09de78 (origin/master, origin/HEAD, master) HEAD@{5}: clone: from https://code.aliyun.com/mico/mico-os.git
+
+  windows update and build: it still fails
+    
+    cd mico-os
+    mico update                     --this adds mbedtls compoment
+    cd ..
+    mico make helloworld@MK110A
+
+
+build aws_iot
+  cygwin: 
+    git clone https://code.aliyun.com/mico/aws_iot.git
+    cd aws_iot
+    cp -a ../mico-os-program/mico-os .
+    cd mico-os
+    git checkout 3.6.4
+
+  windows cmd: 
+    cd C:\Users\yourproject\micotest\aws_iot
+
+    mico update
+    [mico] Updating program "aws_iot" to latest revision in the current branch
+    [mico] Adding component "lib_aws_iot" from "https://code.aliyun.com/mico/lib_aws_iot.git" at rev #495b2858efb2
+    [mico] Adding component "lib_mqtt" from "https://code.aliyun.com/mico/lib_mqtt.git" at rev #408af531ec73
+    [mico] Updating component "mico-os" to rev #ab15ced1a2cf
+
+  cygwin: in mico-os
+    git reset --hard
+    git ceckout 3.6.4
+
+  windows cmd: it fails at making crc 
+    mico make aws_iot@MK110A
+
+  the built .bin can be flashed though it does not boot.
+
+
+build github fog_v2:
+
+  cygwin
+    git clone https://github.com/mxchip/fog_v2_micokit_enjoy
+  it does not look right to use this repo. 
+
+
+find demo build instructions
+
+  github: https://github.com/MXCHIP/mico-os the top page shows "wifi_uart" example. 
+
+  look into the stock sdk 3.2.0 coming with the ide. it is under demos directory: 
+
+    /micosdk/MiCO_SDK/MiCO_A_v3.2.0/demos/application/wifi_uart
+
+
+build demos
+  cygwin:   -- note that the mico-os 3.6.4 branch won't work with the demo
+    git clone https://code.aliyun.com/mico/mico-demos.git
+    cd mico-demos
+    cp -a ../mico-os-program/mico-os .
+    cd mico-os
+    git checkout 3.6.4
+
+  windows cmd:   -- note that must use the mico-os 62ce03ddccc4 hash
+    cd C:\Users\yourproject\micotest\mico-demos
+
+    mico update
+    [mico] Updating program "mico-demos" to latest revision in the current branch
+    [mico] Adding component "lib_nghttp2" from "https://code.aliyun.com/mico/nghttp2.git" at rev #ac5e38b1cb71
+    [mico] Updating component "mico-os" to rev #62ce03ddccc4
+
+    mico make application.wifi_uart@MK110A
+                                                -- the build fails crc. .bin will not boot
+
+  download and install micoder-tools 1.1. set the config again and build:
+
+    mico config --list
+    mico config --global MICODER C:\micosdk\MiCoder_v1.1.Win32\MiCoder
+    mico config --list
+
+    mico make clean
+    mico make application.wifi_uart@MK110A
+                                                -- the build fails crc. .bin will not boot
+
+  checkout 2018 aug hash which is 3.6.4 update:
+
+    git checkout 10a7b8ca5c61767c3616eecfba6563933a4ea683
+    git checkout -b working-3.6.4
+
+    mico update
+    [mico] Updating program "mico-demos" to latest revision in the current branch
+    merge: origin/working-3.6.4 - not something we can merge
+    [mico] Updating component "lib_nghttp2" to rev #ac5e38b1cb71
+    [mico] Updating component "mico-os" to rev #6c465211d3ff
+                                                -- will use this mico-os hash 
+
+  run chmod +x on the crc.exe
+  build again. flashed the .ota.bin ok. it booted ok.
+
+  checkout master and build again: built and flashed ok. booted ok. 
+
+  build wifi.station for MK110A and MK3060: both ok
+
+    mico make wifi.sttaion@MK110A
+    mico make wifi.station@MK3060
+
+  build bootloader: failed in source
+
+    mico make sub_build.bootloader@MK110A@NoRTOS
+ 
+
+build aws_iot again
+  top directory: 
+    mico update
+    [mico] Updating program "aws_iot" to latest revision in the current branch
+    [mico] Updating component "lib_aws_iot" to rev #495b2858efb2
+    [mico] Updating component "lib_mqtt" to rev #408af531ec73
+    [mico] Updating component "mico-os" to rev #ab15ced1a2cf
+
+  mico-os directory: 
+    git reset --hard
+    git ceckout 3.6.4
+
+  top directory: built and flashed ok and booted. 
+    mico make aws_iot@MK110A
+
+

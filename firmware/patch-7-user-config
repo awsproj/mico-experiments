@@ -1,0 +1,307 @@
+commit cb46db5a891039aa44394b7ec2e10a9b9a2ba765
+Date:   Sun Apr 12 18:48:02 2020 -0700
+
+    temp change 7 user config. remove config server and system aws.
+
+diff --git a/wifi/station/station.mk b/wifi/station/station.mk
+index 3d840a2..d92f6d6 100644
+--- a/wifi/station/station.mk
++++ b/wifi/station/station.mk
+@@ -30,3 +30,5 @@ $(NAME)_SOURCES := wifi_station_core_api.c
+ $(NAME)_SOURCES += tcp_client.c
+ $(NAME)_SOURCES += wifi_scan.c
+ 
++wifi_station_core_api.c: user_cli.c
++
+diff --git a/wifi/station/tcp_client.c b/wifi/station/tcp_client.c
+index ae242f6..168186e 100644
+--- a/wifi/station/tcp_client.c
++++ b/wifi/station/tcp_client.c
+@@ -31,12 +31,13 @@
+ 
+ #include "mico.h"
+ #include "SocketUtils.h"
++#include "user_cli.h" /* for application_config_t */
+ 
+ #define tcp_client_log(M, ...) custom_log("TCP-client", M, ##__VA_ARGS__)
+ 
+ #define DUMMY_SEND_LEN (1400) /* 0 to echo back. non-zero to send the n bytes */
+ 
+-static char tcp_remote_ip[16] = "192.168.2.1"; /*remote ip address*/
++static char tcp_remote_ip[16] = "0.0.0.0"; /*remote ip address*/
+ static int tcp_remote_port = 8000; /*remote port*/
+ static mico_semaphore_t wait_sem = NULL;
+ 
+@@ -70,6 +71,32 @@ static void micoNotify_WifiStatusHandler( WiFiEvent status, void* const inContex
+     }
+ }
+ 
++static int ip_addr_valid()
++{
++    int valid = 0;
++    int ip_len = strlen(tcp_remote_ip);
++    if ( ip_len > 6 && ip_len < 16 ) {
++        char c1 = tcp_remote_ip[0];
++        if ( c1 >= '1' && c1 <= '9' ) {
++            valid = 1; /* ip address must start with 1-to-9 */
++        }
++    }
++    if (!valid) {
++        application_config_t *userconf = mico_system_context_get_user_data( NULL );
++        if ( userconf != NULL ) {
++            int apnLen = strlen(userconf->remoteServerDomain);
++            if (apnLen >= 7 && apnLen < 16 ) {
++                char c1 = userconf->remoteServerDomain[0];
++                if ( c1 >= '1' && c1 <= '9' ) {
++                    strcpy(tcp_remote_ip, userconf->remoteServerDomain);
++                    valid = 1;
++                }
++            }
++        }
++    }
++    return valid;
++}
++
+ /*when client connected wlan success,create socket*/
+ void tcp_client_thread( mico_thread_arg_t arg )
+ {
+@@ -107,6 +134,10 @@ void tcp_client_thread( mico_thread_arg_t arg )
+         tcp_client_log( "tcp_client test continue due to wifi_up not right..." );
+         continue;
+     }
++    if ( ! ip_addr_valid() ) {
++        tcp_client_log( "tcp_client test continue due to domain not right..." );
++        continue;
++    }
+     tcp_fd = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
+     require_action( IsValidSocket( tcp_fd ), exit, err = kNoResourcesErr );
+ 
+diff --git a/wifi/station/user_cli.c b/wifi/station/user_cli.c
+index 8e00db0..bc96a9c 100644
+--- a/wifi/station/user_cli.c
++++ b/wifi/station/user_cli.c
+@@ -7,9 +7,27 @@ extern int tcp_client_test_enabled;
+ static void user_debug_Command(char *pcWriteBuffer, int xWriteBufferLen, 
+                                 int argc, char **argv)
+ {
++    application_config_t *userconf = mico_system_context_get_user_data( NULL );
++
+   if (argc == 1) {
+-    cmd_printf("Usage: userdebug on/off. tcp_client_test_enabled is currently %s\r\n",
++    cmd_printf("Usage: userdebug on/off/erase. tcp_client_test_enabled is currently %s\r\n",
+                tcp_client_test_enabled ? "Enabled" : "Disabled");
++    if ( userconf != NULL ) {
++        int apnLen = strlen(userconf->remoteServerSSID);
++        if (apnLen >= 0 && apnLen <= 32) {
++            cmd_printf("  ApnConf SSID: len %d name %s\r\n", 
++                        apnLen, userconf->remoteServerSSID);
++        } else {
++            cmd_printf("  ApnConf SSID: len %d name <no-print>\r\n", apnLen);
++        }
++        apnLen = strlen(userconf->remoteServerDomain);
++        if (apnLen >= 0 && apnLen <= 16) {
++            cmd_printf("  ApnConf Domain: len %d name %s\r\n", 
++                        apnLen, userconf->remoteServerDomain);
++        } else {
++            cmd_printf("  ApnConf Domain: len %d name <no-print>\r\n", apnLen);
++        }
++    }
+     return;
+   }
+   
+@@ -19,6 +37,30 @@ static void user_debug_Command(char *pcWriteBuffer, int xWriteBufferLen,
+   } else if (!strcasecmp(argv[1], "off")) {
+     cmd_printf("Disable tcp_client_test_enabled\r\n");
+     tcp_client_test_enabled = 0;
++  } else if (!strcasecmp(argv[1], "erase")) {
++    cmd_printf("Disable tcp_client_test_enabled\r\n");
++    tcp_client_test_enabled = 0;
++    mico_system_context_restore( (void*) 1 );
++    mico_system_context_update( (void*) 1 );
++  } else {
++    if ( userconf != NULL ) {
++        int apnLen = strlen(argv[1]);
++        if (apnLen > 0 && apnLen <= 32) {
++            char c1 = argv[1][0];
++            if (c1 >= '1' && c1 <= '9' && apnLen < 16) {
++                strcpy(userconf->remoteServerDomain, argv[1]);
++                cmd_printf("  ApnConf set Domain: len %d name %s\r\n", 
++                            apnLen, userconf->remoteServerDomain);
++            } else {
++                strcpy(userconf->remoteServerSSID, argv[1]);
++                cmd_printf("  ApnConf set SSID: len %d name %s\r\n", 
++                            apnLen, userconf->remoteServerSSID);
++            }
++            mico_system_context_update( (void*) 1 );
++        } else {
++            cmd_printf("  ApnConf not set: len %d name <no-print>\r\n", apnLen);
++        }
++    }
+   }
+ }
+ 
+diff --git a/wifi/station/user_cli.h b/wifi/station/user_cli.h
+new file mode 100644
+index 0000000..c2a9554
+--- /dev/null
++++ b/wifi/station/user_cli.h
+@@ -0,0 +1,58 @@
++/*
++ * user-cli.h
++ */
++
++#pragma once
++
++#include "common.h"
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++
++/*User provided configurations*/
++#define CONFIGURATION_VERSION               0x00000002 // if default configuration is changed, update this number
++#define DEAFULT_REMOTE_SERVER               "0.0.0.0"
++#define DEFAULT_REMOTE_SERVER_PORT          8080
++#define MAX_QUEUE_NUM                       6  // 1 remote client, 5 local server
++#define MAX_QUEUE_LENGTH                    8  // each queue max 8 msg
++
++/*Application's configuration stores in flash*/
++typedef struct
++{
++  uint32_t          configDataVer;
++  uint32_t          localServerPort;
++
++  /*local services*/
++  bool              localServerEnable;
++  bool              remoteServerEnable;
++  char              remoteServerDomain[64];
++  int               remoteServerPort;
++  char              remoteServerSSID[64];
++
++  /*IO settings*/
++  uint32_t          USART_BaudRate;
++} application_config_t;
++
++/*Running status*/
++typedef struct  {
++  /*Local clients port list*/
++  mico_queue_t*   socket_out_queue[MAX_QUEUE_NUM];
++  mico_mutex_t    queue_mtx;
++} current_app_status_t;
++
++typedef struct _app_context_t
++{
++  /*Flash content*/
++  application_config_t*     appConfig;
++
++  /*Running status*/
++  current_app_status_t      appStatus;
++} app_context_t;
++
++
++#ifdef __cplusplus
++} /*extern "C" */
++#endif
++
+diff --git a/wifi/station/wifi_station_core_api.c b/wifi/station/wifi_station_core_api.c
+index f6a5f66..4f71979 100644
+--- a/wifi/station/wifi_station_core_api.c
++++ b/wifi/station/wifi_station_core_api.c
+@@ -31,6 +31,7 @@
+ 
+ #include "mico.h"
+ #include "mico_system.h" /* cli_init(). MICOCli.h is for sdk 2.2.0 or earlier */
++#include "user_cli.h"
+ 
+ #define wifi_station_log(M, ...) custom_log("WIFI-station-core", M, ##__VA_ARGS__)
+ 
+@@ -54,6 +55,35 @@ static void micoNotify_WifiStatusHandler(WiFiEvent event,  void* inContext)
+   }
+ }
+ 
++/* MICO core data API:
++    mico_system_context_init: init core data, sys and app config read from flash. 
++    mico_system_context_get:  read the core data address. 
++    mico_system_context_get_user_data: get app config data address. 
++    mico_system_context_restore: restore to default. the callback sets default values. 
++    appRestoreDefault_callback:  app sets default values
++    mico_system_context_update:  write to flash the config data managed by core manager. 
++ */
++
++/* MICO system callback: Restore default configuration provided by application */
++void appRestoreDefault_callback( void * const user_config_data, uint32_t size )
++{
++    if ( size != sizeof(application_config_t) ) {
++        wifi_station_log("Mismatched config size");
++        return;
++    }
++    UNUSED_PARAMETER( size );
++    application_config_t* appConfig = user_config_data;
++    appConfig->configDataVer = CONFIGURATION_VERSION;
++    appConfig->localServerPort = 0;
++    appConfig->localServerEnable = false;
++    appConfig->USART_BaudRate = 115200;
++    appConfig->remoteServerEnable = true;
++    sprintf( appConfig->remoteServerDomain, DEAFULT_REMOTE_SERVER );
++    appConfig->remoteServerPort = DEFAULT_REMOTE_SERVER_PORT;
++    strcpy(appConfig->remoteServerSSID, "");
++    wifi_station_log("Config was set to default");
++}
++
+ #include "user_cli.c"
+ int application_start( void )
+ {
+@@ -62,14 +92,23 @@ int application_start( void )
+ 
+   MicoInit( );
+ 
+-  /* MicoCliInit() is for sdk 2.2.0 and earlier. 
+-   * 2.3.0 already in mico_system_init(mico_context). 
+-   * CLI_UART is defined in mico-os/board/MK110A/platform.h 
+-   * uart is initialized at mico-os/MiCO/system/command_console/mico_cli.c:MicoUartInitialize()
+-   * command is defined in mico_cli.h 
+-   * int cli_register_commands(const struct cli_command *commands, int num_commands)
+-   * refer to mico-os/MiCO/command_console/mico_cli.c for more information
+-   */
++    app_context_t* app_context;
++    mico_Context_t* mico_context;
++
++    /* Create application context */
++    app_context = (app_context_t *) calloc( 1, sizeof(app_context_t) );
++    require_action( app_context, exit, err = kNoMemoryErr );
++
++    /* Create mico system context and read application's config data from flash */
++    mico_context = mico_system_context_init( sizeof(application_config_t) );
++    app_context->appConfig = mico_system_context_get_user_data( mico_context );
++
++    /* mico system initialize */
++    #if 0 /* it would start config_server.c:154 and system_aws.c:244 */
++    err = mico_system_init( mico_context );
++    require_noerr( err, exit );
++    #endif
++
+   cli_init();
+   cli_register_commands(tcp_client_user_clis, 1);
+   
+@@ -84,10 +123,19 @@ int application_start( void )
+   /* Register user function when wlan connection is faile in one attempt */
+   err = mico_system_notify_register( mico_notify_WIFI_CONNECT_FAILED, (void *)micoNotify_ConnectFailedHandler, NULL );
+   require_noerr( err, exit );
++
++    char *apName = NULL;
++    int apNameLen = strlen(app_context->appConfig->remoteServerSSID);
++    if ( apNameLen < 1 || apNameLen >= 32 ) {
++        wifi_station_log("Config AP name len %d out of range", apNameLen);
++        goto exit;
++    }
++    apName = app_context->appConfig->remoteServerSSID;
++    wifi_station_log("Config AP name len %d name %s", apNameLen, apName);
+   
+   /* Initialize wlan parameters */
+   memset( &wNetConfigAdv, 0x0, sizeof(wNetConfigAdv) );
+-  strcpy((char*)wNetConfigAdv.ap_info.ssid, "TestAP");          /* wlan ssid string */
++  strcpy((char*)wNetConfigAdv.ap_info.ssid, apName);            /* wlan ssid string */
+   strcpy((char*)wNetConfigAdv.key, "stm32f215");                /* wlan key string or hex data in WEP mode */
+   wNetConfigAdv.key_len = strlen("stm32f215");                  /* wlan key length */
+   wNetConfigAdv.ap_info.security = SECURITY_TYPE_AUTO;          /* wlan security mode */

@@ -1,0 +1,198 @@
+
+flashed: 
+micosdk\extracted\MOC108A_0000.0000.A212\MOC108A_0000.0000.A212.ota.bin
+
+
+uart1 921600 8n1, debug uart, sends write command.
+uart2 115200 8n1, user uart sends at commands
+
+
+qc boot: uart2 set to 921600 too
+
+uart1:
+[0][RTOS: mico_rtos_common.c:  84] Started MiCO RTOS interface for FreeRTOS v9.0.0
+
+uart2:
+==== MXCHIP Manufacture Test ====
+Serial Number: 0000.0000.A212
+App CRC: 0C55
+Bootloader Version: 1.1.0
+Library Version: moc108.004
+APP Version: MiCO basic_AT_v2.1.2, build at 14:48:38 Sep  7 2018
+Driver: moc108_wlan
+MAC: FC-EE-E6-12-87-D9
+Scan AP Success:
+  SSID: DemoTesting2, RSSI: -48
+  SSID: , RSSI: -55
+  SSID: , RSSI: -63
+  SSID: TestAP, RSSI: -65
+
+
+ate boot: uart2 921600
+no response
+
+
+normal boot:
+[0][RTOS: mico_rtos_common.c:  84] Started MiCO RTOS interface for FreeRTOS v9.0.0
+[34][SYSTEM: system_misc.c: 302] Free memory 144176 bytes
+[34][SYSTEM: system_misc.c: 308] Kernel version: moc108.004
+[36][SYSTEM: system_misc.c: 311] MiCO version: 3.6.0
+[36][SYSTEM: system_misc.c: 313] Wi-Fi driver version moc108_wlan, mac FC:EE:E6:12:87:D9
+[36][core:  22] core init
+[38][command: 129] register command: AT+FWVER
+[38][command: 129] register command: AT+SYSTIME
+[38][command: 129] register command: AT+MEMFREE
+[40][command: 129] register command: AT+FACTORY
+[40][command: 129] register command: AT+REBOOT
+[40][uart: 286] uart init
+[42][uart: 300] baudrate:115200
+[42][command: 129] register command: AT+UART
+[42][command: 129] register command: AT+UARTFOMAT
+[42][command: 129] register command: AT+UARTE
+[44][driver: 300] driver name: uart
+[44][driver: 173] inbuf size: 1024
+[44][driver: 182] echo 1
+[48][command: 129] register command: AT+STANDBY
+[48][command: 129] register command: AT+MLPC
+[48][command: 129] register command: AT+FLASHLOCK
+[48][command: 129] register command: AT+WLPC
+[50][command: 129] register command: AT+WFVER
+[50][command: 129] register command: AT+WMAC
+[50][command: 129] register command: AT+WSCANOPT
+[52][command: 129] register command: AT+WSCAN
+[52][command: 129] register command: AT+WDHCP
+[52][command: 129] register command: AT+WSAPIP
+[54][command: 129] register command: AT+WSAP
+[54][command: 129] register command: AT+WSAPQ
+[54][command: 129] register command: AT+WSAPS
+[56][command: 129] register command: AT+WJAPIP
+[56][command: 129] register command: AT+WJAP
+[56][command: 129] register command: AT+WJAPQ
+[56][command: 129] register command: AT+WJAPS
+[58][command: 129] register command: AT+WEVENT
+[58][wifi: 987] wifi init
+[58][command: 129] register command: AT+SSLCERTGET
+[60][command: 129] register command: AT+SSLCERTSET
+[60][command: 129] register command: AT+CIPDOMAIN
+[60][command: 129] register command: AT+CIPAUTOCONN
+[62][command: 129] register command: AT+CIPSSLOPT
+[62][command: 129] register command: AT+CIPSTART
+[62][command: 129] register command: AT+CIPSTOP
+[64][command: 129] register command: AT+CIPSTATUS
+[64][command: 129] register command: AT+CIPSEND
+[64][command: 129] register command: AT+CIPSENDRAW
+[66][command: 129] register command: AT+CIPRECV
+[66][command: 129] register command: AT+CIPRECVCFG
+[66][command: 129] register command: AT+CIPEVENT
+[68][ntp: 156] ntp init
+[68][command: 129] register command: AT+SNTPCFG
+[68][command: 129] register command: AT+SNTPTIME
+[68][command: 129] register command: AT+RTCGET
+[70][innet: 183] innet init
+[70][command: 129] register command: AT+SMARTSTART
+[70][command: 129] register command: AT+SMARTSTOP
+[72][command: 129] register command: AT+SMARTCFG
+[72][command: 129] register command: AT+MQTTAUTH
+[72][command: 129] register command: AT+MQTTSOCK
+[74][command: 129] register command: AT+MQTTSSL
+[74][command: 129] register command: AT+MQTTCID
+[74][command: 129] register command: AT+MQTTRECONN
+[76][command: 129] register command: AT+MQTTCAVERIFY
+[76][command: 129] register command: AT+MQTTSTART
+[76][command: 129] register command: AT+MQTTAUTOSTART
+[78][command: 129] register command: AT+MQTTCLOSE
+[78][command: 129] register command: AT+MQTTSUB
+[78][command: 129] register command: AT+MQTTUNSUB
+[80][command: 129] register command: AT+MQTTPUB
+[80][command: 129] register command: AT+MQTTSEND
+[80][command: 129] register command: AT+MQTTKEEPALIVE
+[82][command: 129] register command: AT+MQTTSTATUS
+[82][command: 129] register command: AT+MQTTEVENT
+[82][mqtt:1212] mqtt init
+[84][http: 303] http download init
+[84][command: 129] register command: AT+FILELOAD
+[84][command: 129] register command: AT+FILELOADR
+[84][command: 129] register command: AT+FILELOADQ
+[86][fog_ota_v3: 146] fog_v3_ota init
+[86][command: 129] register command: AT+OTACHECK
+[86][command: 129] register command: AT+OTASTART
+[88][command: 129] register command: AT
+
+[190492][command:  80] search command: AT+FWVER
+[190492][command:  91] find command     AT+FWVER
+0x0d 0x0a +FWVER:basic_AT_v2.1.20x0d 0x0a OK0x0d 0x0a ...
+
+#
+# help
+
+====Build-in Commands====
+help:
+version:
+echo:
+exit: CLI exit
+scan: scan ap
+wifistate: Show wifi state
+wifidebug: wifidebug on/off
+awsdebug: enable aws debug info
+ifconfig: Show IP address
+arp: arp show/clean
+ping: ping <ip>
+dns: show/clean/<domain>
+sockshow: Show all sockets
+tasklist: list all thread name status
+memshow: print memory information
+memdump: <addr> <length>
+memset: <addr> <value 1> [<value 2> ... <value n>]
+memp: print memp list
+wifidriver: show wifi driver status
+reboot: reboot MiCO system
+tftp: tftp
+time: system time
+ota: system ota
+flash: Flash memory map
+micodebug: micodebug on/off
+
+====User Commands====
+
+# version
+
+Product module: MK108_1
+Hardware version: 1.0
+Manufacture: MXCHIP Inc.
+Kernel version: moc108.004
+MiCO version: 3.6.0
+Firmware version: basic_AT_v2.1.2
+Application info: MiCO
+Bootloader version: 1.1.0
+WIFI version: moc108_wlan
+
+# memshow
+
+free memory 128632
+
+# memp
+
+use malloc
+
+# flash
+
+[352562][MICO:mico_platform_common.c:MicoFlashGetInfo: 563] **ASSERT**
+   3 |  Bootloader |  Dev:0  | 0x00000000 | 0x00010000 |
+   4 | Application |  Dev:0  | 0x00013000 | 0x000ed000 |
+   5 |      (null) |  Dev:0  | 0x00000000 | 0x00000000 |
+   6 | OTA Storage |  Dev:0  | 0x00100000 | 0x000a5e66 |
+   7 |      (null) |  Dev:0  | 0x00000000 | 0x00000000 |
+   8 |  PARAMETER1 |  Dev:0  | 0x00010000 | 0x00001000 |
+   9 |  PARAMETER2 |  Dev:0  | 0x00011000 | 0x00001000 |
+
+
+
+bootloader mode: flash new built aws_iot.ota and wifi_uart.ota
+
+uart1: 
+
+$ erase 0x13200 0x100000
+$ write 0x13200
+
+send file through ymodem
+

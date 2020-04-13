@@ -1,0 +1,7 @@
+
+How to download ota.bin through bootloader order:
+
+1.用户串口，进boot模式，boot拉低，按下CHIP_EN按键，波特率：921600bps
+2.输入命令:erase 0x13200 0x100000，回车，擦除后出现 $ 即可。
+3.输入命令:write 0x13200 回车，选择 send ymodem，选择ota.bin, 更新即可。
+4.用户串口，status拉低，boot拉低，921600，进QC log,确认固件版本及CRC值。

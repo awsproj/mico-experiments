@@ -1,0 +1,646 @@
+[0][RTOS: mico_rtos_common.c:  84] Started MiCO RTOS interface for FreeRTOS v9.0.0
+[32][SYSTEM: system_misc.c: 302] Free memory 145360 bytes
+[32][SYSTEM: system_misc.c: 308] Kernel version: moc108.004
+[34][SYSTEM: system_misc.c: 311] MiCO version: 3.6.0
+[34][SYSTEM: system_misc.c: 313] Wi-Fi driver version moc108_wlan, mac FC:EE:E6:1A:5E:BD
+[36][core:  22] core init
+[36][command: 129] register command: AT+FWVER
+[36][command: 129] register command: AT+SYSTIME
+[38][command: 129] register command: AT+MEMFREE
+[38][command: 129] register command: AT+FACTORY
+[38][command: 129] register command: AT+REBOOT
+[40][uart: 286] uart init
+[40][uart: 300] baudrate:115200
+[40][command: 129] register command: AT+UART
+[40][command: 129] register command: AT+UARTFOMAT
+[42][command: 129] register command: AT+UARTE
+[42][driver: 300] driver name: uart
+[42][driver: 173] inbuf size: 1024
+[44][driver: 182] echo 1
+[46][command: 129] register command: AT+STANDBY
+[46][command: 129] register command: AT+MLPC
+[46][command: 129] register command: AT+FLASHLOCK
+[46][command: 129] register command: AT+WLPC
+[48][command: 129] register command: AT+WFVER
+[48][command: 129] register command: AT+WMAC
+[48][command: 129] register command: AT+WSCANOPT
+[50][command: 129] register command: AT+WSCAN
+[50][command: 129] register command: AT+WDHCP
+[50][command: 129] register command: AT+WSAPIP
+[52][command: 129] register command: AT+WSAP
+[52][command: 129] register command: AT+WSAPQ
+[52][command: 129] register command: AT+WSAPS
+[54][command: 129] register command: AT+WJAPIP
+[54][command: 129] register command: AT+WJAP
+[54][command: 129] register command: AT+WJAPQ
+[54][command: 129] register command: AT+WJAPS
+[56][command: 129] register command: AT+WEVENT
+[56][wifi: 987] wifi init
+[56][command: 129] register command: AT+SSLCERTGET
+[58][command: 129] register command: AT+SSLCERTSET
+[58][command: 129] register command: AT+CIPDOMAIN
+[58][command: 129] register command: AT+CIPAUTOCONN
+[60][command: 129] register command: AT+CIPSSLOPT
+[60][command: 129] register command: AT+CIPSTART
+[60][command: 129] register command: AT+CIPSTOP
+[62][command: 129] register command: AT+CIPSTATUS
+[62][command: 129] register command: AT+CIPSEND
+[62][command: 129] register command: AT+CIPSENDRAW
+[64][command: 129] register command: AT+CIPRECV
+[64][command: 129] register command: AT+CIPRECVCFG
+[64][command: 129] register command: AT+CIPEVENT
+[66][ntp: 156] ntp init
+[66][command: 129] register command: AT+SNTPCFG
+[66][command: 129] register command: AT+SNTPTIME
+[66][command: 129] register command: AT+RTCGET
+[68][innet: 183] innet init
+[68][command: 129] register command: AT+SMARTSTART
+[68][command: 129] register command: AT+SMARTSTOP
+[70][command: 129] register command: AT+SMARTCFG
+[70][command: 129] register command: AT+MQTTAUTH
+[70][command: 129] register command: AT+MQTTSOCK
+[72][command: 129] register command: AT+MQTTSSL
+[72][command: 129] register command: AT+MQTTCID
+[72][command: 129] register command: AT+MQTTRECONN
+[74][command: 129] register command: AT+MQTTCAVERIFY
+[74][command: 129] register command: AT+MQTTSTART
+[74][command: 129] register command: AT+MQTTAUTOSTART
+[76][command: 129] register command: AT+MQTTCLOSE
+[76][command: 129] register command: AT+MQTTSUB
+[76][command: 129] register command: AT+MQTTUNSUB
+[78][command: 129] register command: AT+MQTTPUB
+[78][command: 129] register command: AT+MQTTSEND
+[78][command: 129] register command: AT+MQTTKEEPALIVE
+[80][command: 129] register command: AT+MQTTSTATUS
+[80][command: 129] register command: AT+MQTTEVENT
+[80][mqtt:1212] mqtt init
+[82][http: 303] http download init
+[82][command: 129] register command: AT+FILELOAD
+[82][command: 129] register command: AT+FILELOADR
+[82][command: 129] register command: AT+FILELOADQ
+[84][fog_ota_v3: 146] fog_v3_ota init
+[84][command: 129] register command: AT+OTACHECK
+[84][command: 129] register command: AT+OTASTART
+[86][command: 129] register command: AT+ENETRAWMODE
+[86][command: 129] register command: AT+ENETRAWSEND
+[86][command: 129] register command: AT
+[112054][driver:  26]  A
+A...
+[112654][driver:  26]  T
+T...
+[113700][driver:  28]  0x0d 
+0x0d ...
+[113702][command:  80] search command: AT
+[113702][command:  91] find command	AT
+[113702][core:  11] at command test
+0x0d 0x0a OK0x0d 0x0a ...
+[117990][driver:  26]  A
+A...
+[118244][driver:  26]  T
+T...
+[119326][driver:  26]  +
++...
+[120770][driver:  26]  F
+F...
+[122004][driver:  26]  W
+W...
+[122386][driver:  26]  V
+V...
+[122686][driver:  26]  E
+E...
+[122812][driver:  26]  R
+R...
+[123244][driver:  26]  ?
+?...
+[123590][driver:  28]  0x0d 
+0x0d ...
+[123592][command:  80] search command: AT+FWVER
+[123592][command:  91] find command	AT+FWVER
+0x0d 0x0a +FWVER:basic_AT_v2.1.30x0d 0x0a OK0x0d 0x0a ...
+[217502][driver:  28]  0x0d 
+0x0d ...
+[217810][driver:  26]  A
+A...
+[217810][driver:  26]  T
+T...
+[217812][driver:  28]  0x0d 
+0x0d ...
+[217812][command:  80] search command: AT
+[217812][command:  91] find command	AT
+[217814][core:  11] at command test
+0x0d 0x0a OK0x0d 0x0a ...
+[218132][driver:  28]  0x0d 
+0x0d ...
+[218432][driver:  28]  0x0d 
+0x0d ...
+[218752][driver:  26]  A
+A...
+[218752][driver:  26]  T
+T...
+[218752][driver:  28]  0x0d 
+0x0d ...
+[218752][command:  80] search command: AT
+[218754][command:  91] find command	AT
+[218754][core:  11] at command test
+0x0d 0x0a OK0x0d 0x0a ...
+[219072][driver:  26]  A
+A...
+[219072][driver:  26]  T
+T...
+[219074][driver:  26]  +
++...
+[219074][driver:  26]  F
+F...
+[219074][driver:  26]  A
+A...
+[219076][driver:  26]  C
+C...
+[219076][driver:  26]  T
+T...
+[219076][driver:  26]  O
+O...
+[219076][driver:  26]  R
+R...
+[219078][driver:  26]  Y
+Y...
+[219078][driver:  28]  0x0d 
+0x0d ...
+[219078][command:  80] search command: AT+FACTORY
+[219080][command:  91] find command	AT+FACTORY
+0x0d 0x0a OK0x0d 0x0a ...
+[0][RTOS: mico_rtos_common.c:  84] Started MiCO RTOS interface for FreeRTOS v9.0.0
+[32][SYSTEM: system_misc.c: 302] Free memory 145360 bytes
+[32][SYSTEM: system_misc.c: 308] Kernel version: moc108.004
+[34][SYSTEM: system_misc.c: 311] MiCO version: 3.6.0
+[34][SYSTEM: system_misc.c: 313] Wi-Fi driver version moc108_wlan, mac FC:EE:E6:1A:5E:BD
+[36][core:  22] core init
+[36][command: 129] register command: AT+FWVER
+[36][command: 129] register command: AT+SYSTIME
+[38][command: 129] register command: AT+MEMFREE
+[38][command: 129] register command: AT+FACTORY
+[38][command: 129] register command: AT+REBOOT
+[40][uart: 286] uart init
+[40][uart: 300] baudrate:115200
+[40][command: 129] register command: AT+UART
+[40][command: 129] register command: AT+UARTFOMAT
+[42][command: 129] register command: AT+UARTE
+[42][driver: 300] driver name: uart
+[42][driver: 173] inbuf size: 1024
+[44][driver: 182] echo 1
+[46][command: 129] register command: AT+STANDBY
+[46][command: 129] register command: AT+MLPC
+[46][command: 129] register command: AT+FLASHLOCK
+[46][command: 129] register command: AT+WLPC
+[48][command: 129] register command: AT+WFVER
+[48][command: 129] register command: AT+WMAC
+[48][command: 129] register command: AT+WSCANOPT
+[50][command: 129] register command: AT+WSCAN
+[50][command: 129] register command: AT+WDHCP
+[50][command: 129] register command: AT+WSAPIP
+[52][command: 129] register command: AT+WSAP
+[52][command: 129] register command: AT+WSAPQ
+[52][command: 129] register command: AT+WSAPS
+[54][command: 129] register command: AT+WJAPIP
+[54][command: 129] register command: AT+WJAP
+[54][command: 129] register command: AT+WJAPQ
+[54][command: 129] register command: AT+WJAPS
+[56][command: 129] register command: AT+WEVENT
+[56][wifi: 987] wifi init
+[56][command: 129] register command: AT+SSLCERTGET
+[58][command: 129] register command: AT+SSLCERTSET
+[58][command: 129] register command: AT+CIPDOMAIN
+[58][command: 129] register command: AT+CIPAUTOCONN
+[60][command: 129] register command: AT+CIPSSLOPT
+[60][command: 129] register command: AT+CIPSTART
+[60][command: 129] register command: AT+CIPSTOP
+[62][command: 129] register command: AT+CIPSTATUS
+[62][command: 129] register command: AT+CIPSEND
+[62][command: 129] register command: AT+CIPSENDRAW
+[64][command: 129] register command: AT+CIPRECV
+[64][command: 129] register command: AT+CIPRECVCFG
+[64][command: 129] register command: AT+CIPEVENT
+[66][ntp: 156] ntp init
+[66][command: 129] register command: AT+SNTPCFG
+[66][command: 129] register command: AT+SNTPTIME
+[66][command: 129] register command: AT+RTCGET
+[68][innet: 183] innet init
+[68][command: 129] register command: AT+SMARTSTART
+[68][command: 129] register command: AT+SMARTSTOP
+[70][command: 129] register command: AT+SMARTCFG
+[70][command: 129] register command: AT+MQTTAUTH
+[70][command: 129] register command: AT+MQTTSOCK
+[72][command: 129] register command: AT+MQTTSSL
+[72][command: 129] register command: AT+MQTTCID
+[72][command: 129] register command: AT+MQTTRECONN
+[74][command: 129] register command: AT+MQTTCAVERIFY
+[74][command: 129] register command: AT+MQTTSTART
+[74][command: 129] register command: AT+MQTTAUTOSTART
+[76][command: 129] register command: AT+MQTTCLOSE
+[76][command: 129] register command: AT+MQTTSUB
+[76][command: 129] register command: AT+MQTTUNSUB
+[78][command: 129] register command: AT+MQTTPUB
+[78][command: 129] register command: AT+MQTTSEND
+[78][command: 129] register command: AT+MQTTKEEPALIVE
+[80][command: 129] register command: AT+MQTTSTATUS
+[80][command: 129] register command: AT+MQTTEVENT
+[80][mqtt:1212] mqtt init
+[82][http: 303] http download init
+[82][command: 129] register command: AT+FILELOAD
+[82][command: 129] register command: AT+FILELOADR
+[82][command: 129] register command: AT+FILELOADQ
+[84][fog_ota_v3: 146] fog_v3_ota init
+[84][command: 129] register command: AT+OTACHECK
+[84][command: 129] register command: AT+OTASTART
+[86][command: 129] register command: AT+ENETRAWMODE
+[86][command: 129] register command: AT+ENETRAWSEND
+[86][command: 129] register command: AT
+[16570][driver:  26]  A
+A...
+[16572][driver:  26]  T
+T...
+[16572][driver:  26]  +
++...
+[16572][driver:  26]  U
+U...
+[16572][driver:  26]  A
+A...
+[16574][driver:  26]  R
+R...
+[16574][driver:  26]  T
+T...
+[16574][driver:  26]  ?
+?...
+[16576][driver:  28]  0x0d 
+0x0d ...
+[16576][command:  80] search command: AT+UART
+[16576][command:  91] find command	AT+UART
+0x0d 0x0a +UART:115200,8,1,NONE,NONE0x0d 0x0a OK0x0d 0x0a ...
+[16894][driver:  26]  A
+A...
+[16896][driver:  26]  T
+T...
+[16896][driver:  26]  +
++...
+[16896][driver:  26]  U
+U...
+[16896][driver:  26]  A
+A...
+[16898][driver:  26]  R
+R...
+[16898][driver:  26]  T
+T...
+[16898][driver:  26]  =
+=...
+[16898][driver:  26]  9
+9...
+[16900][driver:  26]  2
+2...
+[16900][driver:  26]  1
+1...
+[16900][driver:  26]  6
+6...
+[16900][driver:  26]  0
+0...
+[16902][driver:  26]  0
+0...
+[16902][driver:  26]  ,
+,...
+[16902][driver:  26]  8
+8...
+[16902][driver:  26]  ,
+,...
+[16904][driver:  26]  1
+1...
+[16904][driver:  26]  ,
+,...
+[16904][driver:  26]  N
+N...
+[16906][driver:  26]  O
+O...
+[16906][driver:  26]  N
+N...
+[16906][driver:  26]  E
+E...
+[16906][driver:  26]  ,
+,...
+[16908][driver:  26]  N
+N...
+[16908][driver:  26]  O
+O...
+[16908][driver:  26]  N
+N...
+[16908][driver:  26]  E
+E...
+[16910][driver:  28]  0x0d 
+0x0d ...
+[16910][command:  80] search command: AT+UART
+[16910][command:  91] find command	AT+UART
+[16912][uart:  68] config boudrate:921600
+[16912][para:  61] at cmd config write
+0x0d 0x0a OK0x0d 0x0a ...
+[17242][driver:  26]  A
+A...
+[17242][driver:  26]  T
+T...
+[17244][driver:  26]  +
++...
+[17244][driver:  26]  R
+R...
+[17244][driver:  26]  E
+E...
+[17244][driver:  26]  B
+B...
+[17246][driver:  26]  O
+O...
+[17246][driver:  26]  O
+O...
+[17246][driver:  26]  T
+T...
+[17246][driver:  28]  0x0d 
+0x0d ...
+[17248][command:  80] search command: AT+REBOOT
+[17248][command:  91] find command	AT+REBOOT
+0x0d 0x0a OK0x0d 0x0a ...
+[0][RTOS: mico_rtos_common.c:  84] Started MiCO RTOS interface for FreeRTOS v9.0.0
+[18][SYSTEM: system_misc.c: 302] Free memory 145360 bytes
+[20][SYSTEM: system_misc.c: 308] Kernel version: moc108.004
+[20][SYSTEM: system_misc.c: 311] MiCO version: 3.6.0
+[22][SYSTEM: system_misc.c: 313] Wi-Fi driver version moc108_wlan, mac FC:EE:E6:1A:5E:BD
+[22][core:  22] core init
+[22][command: 129] register command: AT+FWVER
+[24][command: 129] register command: AT+SYSTIME
+[24][command: 129] register command: AT+MEMFREE
+[24][command: 129] register command: AT+FACTORY
+[26][command: 129] register command: AT+REBOOT
+[26][uart: 286] uart init
+[26][uart: 300] baudrate:921600
+[28][command: 129] register command: AT+UART
+[28][command: 129] register command: AT+UARTFOMAT
+[28][command: 129] register command: AT+UARTE
+[28][driver: 300] driver name: uart
+[30][driver: 173] inbuf size: 1024
+[30][driver: 182] echo 1
+[34][command: 129] register command: AT+STANDBY
+[34][command: 129] register command: AT+MLPC
+[34][command: 129] register command: AT+FLASHLOCK
+[34][command: 129] register command: AT+WLPC
+[36][command: 129] register command: AT+WFVER
+[36][command: 129] register command: AT+WMAC
+[36][command: 129] register command: AT+WSCANOPT
+[38][command: 129] register command: AT+WSCAN
+[38][command: 129] register command: AT+WDHCP
+[38][command: 129] register command: AT+WSAPIP
+[40][command: 129] register command: AT+WSAP
+[40][command: 129] register command: AT+WSAPQ
+[40][command: 129] register command: AT+WSAPS
+[42][command: 129] register command: AT+WJAPIP
+[42][command: 129] register command: AT+WJAP
+[42][command: 129] register command: AT+WJAPQ
+[42][command: 129] register command: AT+WJAPS
+[44][command: 129] register command: AT+WEVENT
+[44][wifi: 987] wifi init
+[44][command: 129] register command: AT+SSLCERTGET
+[46][command: 129] register command: AT+SSLCERTSET
+[46][command: 129] register command: AT+CIPDOMAIN
+[46][command: 129] register command: AT+CIPAUTOCONN
+[48][command: 129] register command: AT+CIPSSLOPT
+[48][command: 129] register command: AT+CIPSTART
+[48][command: 129] register command: AT+CIPSTOP
+[50][command: 129] register command: AT+CIPSTATUS
+[50][command: 129] register command: AT+CIPSEND
+[50][command: 129] register command: AT+CIPSENDRAW
+[52][command: 129] register command: AT+CIPRECV
+[52][command: 129] register command: AT+CIPRECVCFG
+[52][command: 129] register command: AT+CIPEVENT
+[54][ntp: 156] ntp init
+[54][command: 129] register command: AT+SNTPCFG
+[54][command: 129] register command: AT+SNTPTIME
+[54][command: 129] register command: AT+RTCGET
+[56][innet: 183] innet init
+[56][command: 129] register command: AT+SMARTSTART
+[56][command: 129] register command: AT+SMARTSTOP
+[58][command: 129] register command: AT+SMARTCFG
+[58][command: 129] register command: AT+MQTTAUTH
+[58][command: 129] register command: AT+MQTTSOCK
+[60][command: 129] register command: AT+MQTTSSL
+[60][command: 129] register command: AT+MQTTCID
+[60][command: 129] register command: AT+MQTTRECONN
+[62][command: 129] register command: AT+MQTTCAVERIFY
+[62][command: 129] register command: AT+MQTTSTART
+[62][command: 129] register command: AT+MQTTAUTOSTART
+[64][command: 129] register command: AT+MQTTCLOSE
+[64][command: 129] register command: AT+MQTTSUB
+[64][command: 129] register command: AT+MQTTUNSUB
+[66][command: 129] register command: AT+MQTTPUB
+[66][command: 129] register command: AT+MQTTSEND
+[66][command: 129] register command: AT+MQTTKEEPALIVE
+[68][command: 129] register command: AT+MQTTSTATUS
+[68][command: 129] register command: AT+MQTTEVENT
+[68][mqtt:1212] mqtt init
+[68][http: 303] http download init
+[70][command: 129] register command: AT+FILELOAD
+[70][command: 129] register command: AT+FILELOADR
+[70][command: 129] register command: AT+FILELOADQ
+[72][fog_ota_v3: 146] fog_v3_ota init
+[72][command: 129] register command: AT+OTACHECK
+[72][command: 129] register command: AT+OTASTART
+[74][command: 129] register command: AT+ENETRAWMODE
+[74][command: 129] register command: AT+ENETRAWSEND
+[74][command: 129] register command: AT
+[106][driver:  28]  0x80 
+0x80 ...
+[108][driver:  28]  0x80 
+0x80 ...
+[108][driver:  28]  0x00 
+0x00 ...
+[108][driver:  28]  0x00 
+0x00 ...
+[110][driver:  28]  0x00 
+0x00 ...
+[110][driver:  28]  0xfe 
+0xfe ...
+[402][driver:  28]  0x80 
+0x80 ...
+[402][driver:  28]  0x00 
+0x00 ...
+[404][driver:  28]  0x00 
+0x00 ...
+[404][driver:  28]  0x00 
+0x00 ...
+[404][driver:  28]  0x00 
+0x00 ...
+[406][driver:  28]  0x80 
+0x80 ...
+[406][driver:  28]  0x00 
+0x00 ...
+[406][driver:  28]  0x00 
+0x00 ...
+[408][driver:  28]  0xf8 
+0xf8 ...
+[408][driver:  28]  0x80 
+0x80 ...
+[408][driver:  28]  0x80 
+0x80 ...
+[408][driver:  28]  0x80 
+0x80 ...
+[410][driver:  28]  0x80 
+0x80 ...
+[410][driver:  28]  0x80 
+0x80 ...
+[410][driver:  28]  0x00 
+0x00 ...
+[412][driver:  28]  0x00 
+0x00 ...
+[412][driver:  28]  0x00 
+0x00 ...
+[412][driver:  28]  0xfe 
+0xfe ...
+[728][driver:  28]  0x0d 
+0x0d ...
+[728][command:  80] search command: 
+[730][command:  98] command not found
+[730][driver: 213] command not found
+0x0d 0x0a ERROR0x0d 0x0a ...
+[1042][driver:  26]  A
+A...
+[1042][driver:  26]  T
+T...
+[1042][driver:  28]  0x0d 
+0x0d ...
+[1044][command:  80] search command: AT
+[1044][command:  91] find command	AT
+[1044][core:  11] at command test
+0x0d 0x0a OK0x0d 0x0a ...
+[1362][driver:  26]  A
+A...
+[1364][driver:  26]  T
+T...
+[1364][driver:  26]  +
++...
+[1364][driver:  26]  W
+W...
+[1364][driver:  26]  J
+J...
+[1366][driver:  26]  A
+A...
+[1366][driver:  26]  P
+P...
+[1366][driver:  26]  =
+=...
+[1366][driver:  26]  S
+S...
+[1368][driver:  26]  i
+i...
+[1368][driver:  26]  t
+t...
+[1368][driver:  26]  a
+a...
+[1368][driver:  26]  r
+r...
+[1370][driver:  26]  a
+a...
+[1370][driver:  26]  A
+A...
+[1370][driver:  26]  P
+P...
+[1370][driver:  28]  0x0d 
+0x0d ...
+[1372][command:  80] search command: AT+WJAP
+[1372][command:  91] find command	AT+WJAP
+[1372][para:  61] at cmd config write
+[1394][wifi: 316] Connect to TestAP...
+0x0d 0x0a OK0x0d 0x0a ...
+[2746][driver:  28]  0x0d 
+0x0d ...
+[4086][driver:  28]  0x0d 
+0x0d ...
+[5426][driver:  28]  0x0d 
+0x0d ...
+[6594][para:  61] at cmd config write
+[6614][wifi:   9] ip: 192.168.43.23
+[6616][wifi:  10] mask: 255.255.255.0
+[6616][wifi:  11] gate: 192.168.43.1
+[6616][wifi:  12] dns: 0.0.0.0
+[6616][wifi:  47] Station up
+0x0d 0x0a +WEVENT:STATION_UP0x0d 0x0a ...
+[6634][driver:  28]  0x0d 
+0x0d ...
+[6936][driver:  26]  A
+A...
+[6936][driver:  26]  T
+T...
+[6936][driver:  28]  0x0d 
+0x0d ...
+[6936][command:  80] search command: AT
+[6938][command:  91] find command	AT
+[6942][core:  11] at command test
+0x0d 0x0a OK0x0d 0x0a ...
+[7254][driver:  26]  A
+A...
+[7256][driver:  26]  T
+T...
+[7256][driver:  26]  +
++...
+[7256][driver:  26]  W
+W...
+[7256][driver:  26]  J
+J...
+[7258][driver:  26]  A
+A...
+[7258][driver:  26]  P
+P...
+[7258][driver:  26]  S
+S...
+[7258][driver:  28]  0x0d 
+0x0d ...
+[7260][command:  80] search command: AT+WJAPS
+[7260][command:  91] find command	AT+WJAPS
+0x0d 0x0a +WJAPS:STATION_UP0x0d 0x0a OK0x0d 0x0a ...
+[7566][driver:  26]  A
+A...
+[7566][driver:  26]  T
+T...
+[7566][driver:  26]  +
++...
+[7566][driver:  26]  W
+W...
+[7568][driver:  26]  J
+J...
+[7568][driver:  26]  A
+A...
+[7568][driver:  26]  P
+P...
+[7568][driver:  26]  ?
+?...
+[7570][driver:  28]  0x0d 
+0x0d ...
+[7570][command:  80] search command: AT+WJAP
+[7570][command:  91] find command	AT+WJAP
+0x0d 0x0a +WJAP:TestAP,341513209855,11,-690x0d 0x0a OK...
+[7886][driver:  26]  A
+A...
+[7886][driver:  26]  T
+T...
+[7888][driver:  26]  +
++...
+[7888][driver:  26]  W
+W...
+[7888][driver:  26]  J
+J...
+[7888][driver:  26]  A
+A...
+[7890][driver:  26]  P
+P...
+[7890][driver:  26]  I
+I...
+[7890][driver:  26]  P
+P...
+[7892][driver:  26]  ?
+?...
+[7892][driver:  28]  0x0d 
+0x0d ...
+[7892][command:  80] search command: AT+WJAPIP
+[7894][command:  91] find command	AT+WJAPIP
+0x0d 0x0a +WJAPIP:192.168.43.23,255.255.255.0,19...
+[8204][driver:  28]  0x0d 
+0x0d ...

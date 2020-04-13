@@ -1,0 +1,123 @@
+
+normal uart debug port: 
+
+[0][RTOS: mico_rtos_common.c:  84] Started MiCO RTOS interface for FreeRTOS v9.0.0
+[18][SYSTEM: system_misc.c: 302] Free memory 152880 bytes
+[20][SYSTEM: system_misc.c: 308] Kernel version: moc108.004
+[20][SYSTEM: system_misc.c: 311] MiCO version: 3.6.0
+[22][SYSTEM: system_misc.c: 313] Wi-Fi driver version moc108_wlan, mac FC:EE:E6:12:87:D9
+[22][SYSTEM: mico_system_init.c: 129] Empty configuration. Starting configuration mode...
+[26][SYSTEM: config_server.c: 154] Config Server established at port: 8000, fd: 1
+[28][SYSTEM: system_aws.c: 244] Start AWS mode
+awssawss version: aws 1.0.1[226][TCP SERVER: LocalTcpServer.c:  70] Server established at port: 921600, fd: 2
+
+#
+# help
+
+====Build-in Commands====
+help:
+version:
+echo:
+exit: CLI exit
+scan: scan ap
+wifistate: Show wifi state
+wifidebug: wifidebug on/off
+awsdebug: enable aws debug info
+ifconfig: Show IP address
+arp: arp show/clean
+ping: ping <ip>
+dns: show/clean/<domain>
+sockshow: Show all sockets
+tasklist: list all thread name status
+memshow: print memory information
+memdump: <addr> <length>
+memset: <addr> <value 1> [<value 2> ... <value n>]
+memp: print memp list
+wifidriver: show wifi driver status
+reboot: reboot MiCO system
+tftp: tftp
+time: system time
+ota: system ota
+flash: Flash memory map
+trace: show last "[file:line] arg"
+micodebug: micodebug on/off
+
+====User Commands====
+
+# version
+
+Product module: MK108_1
+Hardware version: 1.0
+Manufacture: MXCHIP Inc.
+Kernel version: moc108.004
+MiCO version: 3.6.0
+Firmware version: MICO_SPP_2_6
+Application info: SPP(wlan<>uart) Demo based on MICO OS
+Bootloader version: 1.1.0
+WIFI version: moc108_wlan
+
+#
+# tasklist
+
+Name         Status     Prio    Stack   TCB
+-------------------------------------------
+cli             R       5       792     9
+IDLE            R       9       84      5
+Tmr Svc         B       5       699     6
+aws             B       3       338     17
+UART Recv       B       7       112     18
+Bonjour         B       7       102     14
+SYS MONITOR     B       0       155     8
+worker thread   B       3       474     7
+eloop           B       6       974     11
+aws             B       7       844     13
+temp_detct      B       5       206     1
+worker thread   B       7       266     12
+kmsgbk          B       3       980     2
+core_thread     B       2       805     3
+tcp/ip          B       2       648     10
+Local Server    S       7       30      19
+Config Server   S       7       90      16
+
+#
+# awssawss timeout![60436][MICO:system_aws.c:aws_complete_cb:  85] **ASSERT** AWS Timeout or terminated
+
+# 
+# tasklist
+
+Name         Status     Prio    Stack   TCB
+-------------------------------------------
+cli             R       5       792     9
+IDLE            R       9       84      5
+UART Recv       B       7       109     18
+Bonjour         B       7       102     14
+SYS MONITOR     B       0       155     8
+Tmr Svc         B       5       699     6
+worker thread   B       3       474     7
+eloop           B       6       974     11
+temp_detct      B       5       206     1
+worker thread   B       7       266     12
+kmsgbk          B       3       977     2
+core_thread     B       2       805     3
+tcp/ip          B       2       648     10
+Config Server   S       7       90      16
+Local Server    S       7       30      19
+
+
+qc mode user port: 
+
+==== MXCHIP Manufacture Test ====
+Serial Number: 20140606
+App CRC: 059A
+Bootloader Version: 1.1.0
+Library Version: moc108.004
+APP Version: SPP(wlan<>uart) Demo based on MICO OS MICO_SPP_2_6, build at 00:01:37 Apr 10 2020
+Driver: moc108_wlan
+MAC: FC-EE-E6-12-87-D9
+Scan AP Success:
+  SSID: DemoTesting2, RSSI: -43
+  SSID: , RSSI: -56
+  SSID: , RSSI: -64
+  SSID: TestAP, RSSI: -79
+
+

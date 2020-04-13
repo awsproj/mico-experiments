@@ -1,0 +1,7 @@
+
+How to download ota.bin through command in BOOT mode:
+
+1.User Serial Port£¬in boot mode£¬boot pin pull low£¬press CHIP_EN button£¨reset£©£¬baud rate£º921600bps
+2.input command: erase 0x13200 0x100000£¬and enter£¬wait until $ appear¡£
+3.input command: write 0x13200 ,and enter£¬choose "transfer"  --> "send ymodem"£¬and choose "ota.bin", and update¡£
+4.User Serial Port:  status pin pull low£¬and boot Pin pull low£¬ baud rate:921600£¬"QC log" will be printed, and make sure the version of firmware and CRC value.

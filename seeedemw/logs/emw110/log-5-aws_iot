@@ -1,0 +1,34 @@
+
+qc mode user uart:
+
+==== MXCHIP Manufacture Test ====
+Serial Number: 20140606
+App CRC: EE11
+Bootloader Version: 1.1.0
+Library Version: moc108.004
+APP Version: MiCO BASIC Demo MICO_BASIC_1_0, build at 00:09:25 Apr 10 2020
+Driver: moc108_wlan
+MAC: FC-EE-E6-12-87-D9
+Scan AP Success:
+  SSID: DemoTesting2, RSSI: -34
+  SSID: , RSSI: -55
+  SSID: , RSSI: -62
+  SSID: TestAP, RSSI: -62
+
+
+normal mode debug uarg: 
+
+[0][RTOS: mico_rtos_common.c:  84] Started MiCO RTOS interface for FreeRTOS v9.0.0
+[0][RTOS: mico_rtos_common.c:  84] Started MiCO RTOS interface for FreeRTOS v9.0.0
+[16][SYSTEM: system_misc.c: 302] Free memory 148560 bytes
+[18][SYSTEM: system_misc.c: 308] Kernel version: moc108.004
+[18][SYSTEM: system_misc.c: 311] MiCO version: 3.6.0
+[18][SYSTEM: system_misc.c: 313] Wi-Fi driver version moc108_wlan, mac FC:EE:E6:12:87:D9
+[20][SYSTEM: mico_system_init.c: 117] Empty configuration. Starting configuration mode...
+[22][SYSTEM: system_easylink.c: 216] Start easylink combo mode
+[28][SYSTEM: config_server.c: 154] Config Server established at port: 8000, fd: 1
+[60428][MICO:system_easylink.c:easylink_complete_cb:  80] **ASSERT** EasyLink Timeout or terminated
+[60428][SYSTEM: system_easylink.c: 288] Wi-Fi power off
+
+
+

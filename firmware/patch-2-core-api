@@ -1,0 +1,19 @@
+commit e2891c25d0028edc67bc9ce698e51f87cde380a9
+Date:   Sat Apr 11 10:15:00 2020 -0700
+
+    temp change 2 makefile to build static api
+
+diff --git a/wifi/station/station.mk b/wifi/station/station.mk
+index f5a58ae..6d681e9 100644
+--- a/wifi/station/station.mk
++++ b/wifi/station/station.mk
+@@ -24,7 +24,7 @@
+ 
+ NAME := App_wifi_station
+ 
+-#$(NAME)_SOURCES := wifi_station_core_api.c
+-$(NAME)_SOURCES := wifi_station_system_api.c
++$(NAME)_SOURCES := wifi_station_core_api.c
++#$(NAME)_SOURCES := wifi_station_system_api.c
+ 				      
+ 

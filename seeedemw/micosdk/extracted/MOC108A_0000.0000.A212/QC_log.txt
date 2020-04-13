@@ -1,0 +1,41 @@
+ ==== MXCHIP Manufacture Test ====
+Serial Number: 0000.0000.A212
+App CRC: 0C55
+Bootloader Version: 1.1.0-x
+Library Version: moc108.004
+APP Version: MiCO basic_AT_v2.1.2, build at 14:48:38 Sep  7 2018
+Driver: moc108_wlan
+MAC: FC-EE-E6-08-6E-82
+Scan AP Success:
+  SSID: xiaomi_jenny, RSSI: -28
+  SSID: , RSSI: -33
+  SSID: mxchip-rd, RSSI: -34
+  SSID: mxchip-offices, RSSI: -34
+  SSID: , RSSI: -35
+  SSID: 360WiFi-A99575, RSSI: -37
+  SSID: HUAWEI-YOUXX, RSSI: -40
+  SSID: LB_023, RSSI: -43
+  SSID: snowyang, RSSI: -45
+  SSID: William Xu, RSSI: -48
+  SSID: DEEE, RSSI: -50
+  SSID: GP_02, RSSI: -50
+  SSID:   小米共享WiFi_5A64, RSSI: -50
+  SSID: Xiaomi_76, RSSI: -50
+  SSID: mxchip-offices, RSSI: -52
+  SSID: GP_01, RSSI: -53
+  SSID: FOG666, RSSI: -53
+  SSID: AP-034, RSSI: -55
+  SSID: AP011, RSSI: -55
+  SSID: biu, RSSI: -55
+  SSID: AP055, RSSI: -56
+  SSID:  免费安全共享WiFi, RSSI: -56
+  SSID: AWS_15BF96, RSSI: -56
+  SSID: AP017, RSSI: -57
+  SSID: , RSSI: -58
+  SSID: AP057, RSSI: -59
+  SSID: mxchip-rd, RSSI: -59
+  SSID:  免费安全共享WiFi, RSSI: -60
+  SSID: mxchip-offices, RSSI: -61
+  SSID: mxchip-offices, RSSI: -61
+  SSID: mxchip-guest, RSSI: -62
+  SSID: liuliuda, RSSI: -68

@@ -1,0 +1,34 @@
+commit 77b4f6b64359316368e847a1bf525f1982b63f8c
+Date:   Fri Apr 10 21:10:55 2020 -0700
+
+    temp change 1 wifi ap name and retry interval
+
+diff --git a/wifi/station/wifi_station_core_api.c b/wifi/station/wifi_station_core_api.c
+index bc723f8..f251249 100644
+--- a/wifi/station/wifi_station_core_api.c
++++ b/wifi/station/wifi_station_core_api.c
+@@ -31,7 +31,7 @@
+ 
+ #include "mico.h"
+ 
+-#define wifi_station_log(M, ...) custom_log("WIFI", M, ##__VA_ARGS__)
++#define wifi_station_log(M, ...) custom_log("WIFI-station", M, ##__VA_ARGS__)
+ 
+ static void micoNotify_ConnectFailedHandler(OSStatus err, void* inContext)
+ {
+@@ -69,13 +69,13 @@ int application_start( void )
+   
+   /* Initialize wlan parameters */
+   memset( &wNetConfigAdv, 0x0, sizeof(wNetConfigAdv) );
+-  strcpy((char*)wNetConfigAdv.ap_info.ssid, "Xiaomi.Router");   /* wlan ssid string */
++  strcpy((char*)wNetConfigAdv.ap_info.ssid, "TestAP");          /* wlan ssid string */
+   strcpy((char*)wNetConfigAdv.key, "stm32f215");                /* wlan key string or hex data in WEP mode */
+   wNetConfigAdv.key_len = strlen("stm32f215");                  /* wlan key length */
+   wNetConfigAdv.ap_info.security = SECURITY_TYPE_AUTO;          /* wlan security mode */
+   wNetConfigAdv.ap_info.channel = 0;                            /* Select channel automatically */
+   wNetConfigAdv.dhcpMode = DHCP_Client;                         /* Fetch Ip address from DHCP server */
+-  wNetConfigAdv.wifi_retry_interval = 100;                      /* Retry interval after a failure connection */
++  wNetConfigAdv.wifi_retry_interval = 5000;                     /* Retry interval after a failure connection */
+   
+   /* Connect Now! */
+   wifi_station_log("connecting to %s...", wNetConfigAdv.ap_info.ssid);

@@ -1,0 +1,635 @@
+
+uart1 921600 bps 8n1
+
+
+enter low level!
+mac fc:ee:e6:12:87:d9
+leave low level!
+app_init finished
+start-----------hal
+trace config close!!!
+[000004]<V> aos framework init.
+[000014]<I> kv(auto_netmgr) not set, auto_netmgr will be disabled
+[000014]<I> awss version: smarthome-bd18d6d
+awss lib smarthome-bd18d6d
+tpsk: h+YdgRyQfwUdJGcRiOJ7PH1IdnSJy59ITghgUfviNSw=
+Soft_AP_start
+[000024]<D> dump rand(4)+devid(17)+model(28)+secret(40): 859386417 FC0EE0E60120870D9 BIOSEC_SECURITY_SMARTDOOR_P8 Qw91uhrkQzZnOfDGz8nbxuHcKGc9fYaG6ED58gb4
+dump enrollee info:
+40000000fffffffffffffceee61287d9ffffffffffffc0790012616c69626162612d746573742d3732363036010882848b968c9298a43204b048606cdd49d896e0aa00114643304545304536303132303837304439001c42494f5345435f53454355524954595f534d415254444f4f525f503831323933492e96b56f625b098d8196bfd7ee15283f84109e
+channel 1
+[1] ssid:TestAP, mac:341513209855, chn:11, auth:open, none, none
+[2] ssid:DemoTesting2, mac:a0ab1b784e22, chn:11, auth:wpa2-psk, aes, tkip
+channel 1
+channel 2
+channel 3
+channel 4
+channel 5
+channel 6
+channel 7
+channel 8
+channel 9
+channel 10
+channel 11
+channel 12
+channel 13
+channel 1
+channel 3
+channel 4
+channel 6
+channel 11
+channel 1
+channel 6
+channel 11
+channel 1
+[3] ssid:abcd-2.4G, mac:1234567890ab, chn:1, auth:wpa2-psk, aes, aes
+channel 2
+channel 3
+channel 4
+channel 5
+channel 6
+channel 7
+channel 8
+channel 9
+channel 10
+channel 11
+channel 12
+channel 13
+channel 1
+channel 3
+channel 4
+channel 6
+channel 11
+channel 1
+channel 6
+channel 11
+channel 1
+channel 2
+channel 3
+channel 4
+channel 5
+channel 6
+channel 7
+channel 8
+channel 9
+channel 10
+channel 11
+channel 12
+channel 13
+channel 1
+channel 3
+channel 4
+channel 6
+channel 11
+channel 1
+
+channel 6
+channel 7
+channel 8
+channel 9
+[060014]<V> Info: Auto netmgr timeout hit.
+channel 10
+channel 11
+channel 12
+[061074]<V> Info: Auto netmgr timeout hit.
+channel 13
+channel 1
+channel 3
+channel 4
+[062074]<V> Info: Auto netmgr timeout hit.
+channel 6
+channel 11
+channel 1
+[063074]<V> Info: Auto netmgr timeout hit.
+channel 6
+channel 11
+channel 1
+[064074]<V> Info: Auto netmgr timeout hit.
+channel 2
+channel 3
+
+[072074]<V> Info: Auto netmgr timeout hit.
+channel 8
+channel 9
+channel 10
+[073074]<V> Info: Auto netmgr timeout hit.
+channel 11
+channel 12
+channel 13
+channel 1
+[074074]<V> Info: Auto netmgr timeout hit.
+fix channel from 1 to 6
+hint frame: offset:52, T, sn:a
+src:14876ae25c95, bssid:f0f249814d68
+channel lock @ 6
+16+0 [100] b   T 3e2
+[channel scanning] 74102 ms
+final channel 6
+					timestamp = 800
+	 invalid len = 103
+[075074]<V> Info: Auto netmgr timeout hit.
+					timestamp = 1144
+	 invalid len = 60
+					timestamp = 1586
+	 invalid len = 224
+[076074]<V> Info: Auto netmgr timeout hit.
+					timestamp = 2068
+	 invalid len = 104
+					timestamp = 2210
+	 invalid len = 108
+					timestamp = 2530
+	 invalid len = 107
+					timestamp = 2710
+	 invalid len = 224
+					timestamp = 2848
+	 invalid len = 110
+					timestamp = 2860
+	enter try_to_sync_pos: timeout 
+	X+1 [1] 15  T 128
+	X+1 [1] 16  T 128
+	 invalid len = 72
+[077074]<V> Info: Auto netmgr timeout hit.
+	 invalid len = 72
+	 invalid len = 72
+	 invalid len = 105
+	 invalid len = 112
+	 invalid len = 96
+					timestamp = 670
+	 invalid len = 1520
+					timestamp = 726
+	exit try_to_sync_pos: re-enter!
+match=1, match_group=0, match_end=8
+	X = 0, score=1, match=1, reason=4
+	0+1 [1] T 128
+	enter try_to_sync_pos: timeout 
+	X+1 [1] 1e  T 140
+	 invalid len = 76
+[078074]<V> Info: Auto netmgr timeout hit.
+					timestamp = 646
+	 invalid len = 213
+					timestamp = 948
+	 invalid len = 60
+					timestamp = 1104
+	 invalid len = 1520
+					timestamp = 1172
+	 invalid len = 60
+					timestamp = 1180
+	 invalid len = 108
+					timestamp = 1206
+	 invalid len = 111
+					timestamp = 1254
+	 invalid len = 62
+					timestamp = 1282
+	 invalid len = 111
+[079074]<V> Info: Auto netmgr timeout hit.
+					timestamp = 1400
+	 invalid len = 72
+					timestamp = 1400
+	 invalid len = 110
+					timestamp = 1504
+	 invalid len = 121
+					timestamp = 1714
+	 invalid len = 62
+[080074]<V> Info: Auto netmgr timeout hit.
+					timestamp = 2476
+	 invalid len = 121
+					timestamp = 2482
+	 invalid len = 1490
+					timestamp = 2506
+	 invalid len = 76
+					timestamp = 2510
+	 invalid len = 108
+					timestamp = 2532
+	 invalid len = 145
+					timestamp = 2536
+	 invalid len = 80
+					timestamp = 2540
+	 invalid len = 1490
+					timestamp = 2554
+	 invalid len = 125
+					timestamp = 2556
+	 invalid len = 76
+					timestamp = 2686
+	exit try_to_sync_pos: re-enter!
+[1]=128, [1]=140
+match=1, match_group=0, match_end=8
+	X = 0, score=1, match=1, reason=4
+	enter try_to_sync_pos: timeout 
+	X+3 [1] 35  T 27a
+	exit try_to_sync_pos: re-enter!
+match=1, match_group=0, match_end=8
+	X = 0, score=1, match=1, reason=4
+	0+3 [1] T 27a
+	enter try_to_sync_pos: rollback 
+	X+2 [1] 36  T 1dc
+	 invalid len = 72
+	 invalid len = 72
+	 invalid len = 60
+	 invalid len = 60
+					timestamp = 550
+	 invalid len = 224
+					timestamp = 594
+	 invalid len = 120
+[081074]<V> Info: Auto netmgr timeout hit.
+					timestamp = 650
+	 invalid len = 72
+					timestamp = 660
+	 invalid len = 135
+					timestamp = 924
+	 invalid len = 111
+					timestamp = 926
+	 invalid len = 111
+					timestamp = 1104
+	 invalid len = 116
+					timestamp = 1160
+	 invalid len = 236
+					timestamp = 1400
+	 invalid len = 72
+					timestamp = 1468
+	 invalid len = 104
+[082074]<V> Info: Auto netmgr timeout hit.
+					timestamp = 1652
+	 invalid len = 72
+					timestamp = 1984
+	 invalid len = 121
+					timestamp = 2102
+	 invalid len = 111
+					timestamp = 2544
+	 invalid len = 91
+[083074]<V> Info: Auto netmgr timeout hit.
+					timestamp = 2764
+	 invalid len = 242
+					timestamp = 2764
+	 invalid len = 88
+					timestamp = 2766
+	 invalid len = 224
+					timestamp = 2782
+	 invalid len = 60
+					timestamp = 2854
+	exit try_to_sync_pos: re-enter!
+match=1, match_group=0, match_end=8
+	X = 0, score=1, match=1, reason=4
+	0+2 [1] T 1dc
+	enter try_to_sync_pos: timeout 
+	X+2 [1] 4e  T 1d4
+	exit try_to_sync_pos: re-enter!
+[2]=1dc, [2]=1d4
+match=1, match_group=0, match_end=8
+	X = 0, score=1, match=1, reason=4
+	enter try_to_sync_pos: rollback 
+	X+1 [1] 51  T 144
+	 invalid len = 96
+	X+1 [3] 54  T 144
+	X+2 [1] 55  T 1c8
+	 invalid len = 72
+					timestamp = 562
+	 invalid len = 64
+					timestamp = 662
+	 invalid len = 196
+[084074]<V> Info: Auto netmgr timeout hit.
+					timestamp = 876
+	 invalid len = 242
+					timestamp = 920
+	 invalid len = 1520
+					timestamp = 922
+	exit try_to_sync_pos: re-enter!
+[1]=128, [1]=144
+match=2, match_group=0, match_end=8
+	X = 0, score=1, match=2, reason=4
+	enter try_to_sync_pos: timeout 
+	X+2 [1] 5c  T 1c8
+	 invalid len = 76
+	X+2 [2] 5e  T 1c8
+	 invalid len = 111
+	 invalid len = 111
+					timestamp = 340
+	 invalid len = 104
+					timestamp = 438
+	 invalid len = 109
+					timestamp = 742
+	 invalid len = 112
+					timestamp = 744
+	 invalid len = 102
+[085074]<V> Info: Auto netmgr timeout hit.
+					timestamp = 940
+	 invalid len = 105
+[086074]<V> Info: Auto netmgr timeout hit.
+					timestamp = 1844
+	 invalid len = 213
+					timestamp = 2112
+	 invalid len = 244
+					timestamp = 2158
+	exit try_to_sync_pos: re-enter!
+[2]=1dc, [2]=1c8
+match=1, match_group=0, match_end=8
+	X = 0, score=1, match=1, reason=4
+	enter try_to_sync_pos: timeout 
+	X+3 [1] 68  T 264
+	X+4 [3] 6b  T 2f4
+	exit try_to_sync_pos: re-enter!
+[3]=27a, [3]=264
+match=2, match_group=0, match_end=8
+	X = 0, score=1, match=2, reason=4
+	0+4 [1] T 2f4
+	enter try_to_sync_pos: rollback 
+	X+2 [1] 6c  T 1d4
+	 invalid len = 1520
+	 invalid len = 88
+	exit try_to_sync_pos: re-enter!
+[2]=1dc, [2]=1d4
+
+
+[275074]<V> Info: Auto netmgr timeout hit.
+[275464]<V> ===================61
+[275792]<V> ===================74
+[276074]<V> Info: Auto netmgr timeout hit.
+wpa_driver_scan_cb
+get_scan_rst_null
+Failed to get scan results - try scanning again
+wpa_supplicant_req_scan
+Setting scan request: 1.000000 sec
+[277074]<V> Info: Auto netmgr timeout hit.
+[277232]<V> ===================2b
+wpa_supplicant_scan
+wpa_drv_scan
+wpa_send_scan_req
+[278074]<V> Info: Auto netmgr timeout hit.
+[278172]<V> ===================66
+[278566]<V> ===================77
+[278928]<V> ===================76
+[279074]<V> Info: Auto netmgr timeout hit.
+[279304]<V> ===================65
+[279414]<V> ===================72
+[279762]<V> ===================0d
+wpa_driver_scan_cb
+get_scan_rst_null
+Failed to get scan results - try scanning again
+wpa_supplicant_req_scan
+Setting scan request: 1.000000 sec
+[280074]<V> Info: Auto netmgr timeout hit.
+wpa_supplicant_scan
+wpa_drv_scan
+wpa_send_scan_req
+[281074]<V> Info: Auto netmgr timeout hit.
+[282074]<V> Info: Auto netmgr timeout hit.
+[283074]<V> Info: Auto netmgr timeout hit.
+wpa_driver_scan_cb
+get_scan_rst_null
+Failed to get scan results - try scanning again
+wpa_supplicant_req_scan
+Setting scan request: 1.000000 sec
+[284074]<V> Info: Auto netmgr timeout hit.
+wpa_supplicant_scan
+wpa_drv_scan
+
+wpa_supplicant_scan
+wpa_drv_scan
+wpa_send_scan_req
+[357074]<V> Info: Auto netmgr timeout hit.
+[358074]<V> Info: Auto netmgr timeout hit.
+[359074]<V> Info: Auto netmgr timeout hit.
+wpa_driver_scan_cb
+get_scan_rst_null
+Failed to get scan results - try scanning again
+wpa_supplicant_req_scan
+Setting scan request: 1.000000 sec
+[359660]<V> ===================41
+[360010]<V> ===================54
+[360074]<V> Info: Auto netmgr timeout hit.
+[360170]<W> awss connect ssid:aha passwd:12345678 fail
+Cancelling scan request
+[360170]<I> Will reconnect wifi: aha 12345678
+wpa_dInit
+wpa_supplicant_req_scan
+Setting scan request: 0.100000 sec
+MANUAL_SCAN_REQ
+wpa_supplicant_scan
+wpa_drv_scan
+wpa_send_scan_req
+[360704]<V> ===================3f
+[361074]<V> Info: Auto netmgr timeout hit.
+[361086]<V> ===================0d
+[362074]<V> Info: Auto netmgr timeout hit.
+wpa_driver_scan_cb
+get_scan_rst_null
+Failed to get scan results - try scanning again
+wpa_supplicant_req_scan
+Setting scan request: 1.000000 sec
+[363074]<V> Info: Auto netmgr timeout hit.
+wpa_supplicant_scan
+wpa_drv_scan
+
+wpa_supplicant_scan
+wpa_drv_scan
+wpa_send_scan_req
+[655074]<V> Info: Auto netmgr timeout hit.
+[656074]<V> Info: Auto netmgr timeout hit.
+[657074]<V> Info: Auto netmgr timeout hit.
+wpa_driver_scan_cb
+get_scan_rst_null
+Failed to get scan results - try scanning again
+wpa_supplicant_req_scan
+Setting scan request: 1.000000 sec
+[658074]<V> Info: Auto netmgr timeout hit.
+
+=======================================================
+|                MOC108 BOOTLOADER MENU               |
+|-----------------------------------------------------|
+| Comamnd | Arguments        | Description            |
+|---------+------------------+------------------------|
+| read    | <address> <size> | read flash             |
+|---------+------------------+------------------------|
+| write   | <address>        | write flash            |
+|---------+------------------+------------------------|
+| erase   | <address> <size> | erase flash            |
+|---------+------------------+------------------------|
+| boot    | <mode>           | boot to APP, ATE or QC |
+|---------+------------------+------------------------|
+| reboot  |                  | reboot                 |
+=======================================================
+@ Author  : Snow Yang
+@ Version : 1.1.0
+@ Date    : Nov  3 2017 17:31:24
+$ 
+
+$ boot qc
+enter low level!
+mac fc:ee:e6:12:87:d9
+leave low level!
+app_init finished
+start-----------hal
+trace config close!!!
+[000004]<V> aos framework init.
+[000014]<I> kv(auto_netmgr) not set, auto_netmgr will be disabled
+[000014]<I> awss version: smarthome-bd18d6d
+awss lib smarthome-bd18d6d
+tpsk: h+YdgRyQfwUdJGcRiOJ7PH1IdnSJy59ITghgUfviNSw=
+Soft_AP_start
+[000024]<D> dump rand(4)+devid(17)+model(28)+secret(40): 859386417 FC0EE0E60120870D9 BIOSEC_SECURITY_SMARTDOOR_P8 Qw91uhrkQzZnOfDGz8nbxuHcKGc9fYaG6ED58gb4
+dump enrollee info:
+40000000fffffffffffffceee61287d9ffffffffffffc0790012616c69626162612d746573742d3732363036010882848b968c9298a43204b048606cdd49d896e0aa00114643304545304536303132303837304439001c42494f5345435f53454355524954595f534d415254444f4f525f503831323933492e96b56f625b098d8196bfd7ee15283f84109e
+channel 1
+[12] ssid:TestAP, mac:341513209855, chn:11, auth:open, none, none
+channel 1
+
+channel 4
+channel 5
+channel 6
+channel 7
+channel 8
+channel 9
+channel 10
+channel 11
+channel 12
+channel 13
+channel 1
+channel 3
+channel 4
+channel 6
+channel 11
+channel 1
+channel 6
+channel 11
+channel 1
+
+=======================================================
+|                MOC108 BOOTLOADER MENU               |
+|-----------------------------------------------------|
+| Comamnd | Arguments        | Description            |
+|---------+------------------+------------------------|
+| read    | <address> <size> | read flash             |
+|---------+------------------+------------------------|
+| write   | <address>        | write flash            |
+|---------+------------------+------------------------|
+| erase   | <address> <size> | erase flash            |
+|---------+------------------+------------------------|
+| boot    | <mode>           | boot to APP, ATE or QC |
+|---------+------------------+------------------------|
+| reboot  |                  | reboot                 |
+=======================================================
+@ Author  : Snow Yang
+@ Version : 1.1.0
+@ Date    : Nov  3 2017 17:31:24
+$ boot qc
+enter low level!
+mac fc:ee:e6:12:87:d9
+leave low level!
+app_init finished
+start-----------hal
+trace config close!!!
+[000004]<V> aos framework init.
+[000014]<I> kv(auto_netmgr) not set, auto_netmgr will be disabled
+[000014]<I> awss version: smarthome-bd18d6d
+awss lib smarthome-bd18d6d
+tpsk: h+YdgRyQfwUdJGcRiOJ7PH1IdnSJy59ITghgUfviNSw=
+Soft_AP_start
+[000024]<D> dump rand(4)+devid(17)+model(28)+secret(40): 859386417 FC0EE0E60120870D9 BIOSEC_SECURITY_SMARTDOOR_P8 Qw91uhrkQzZnOfDGz8nbxuHcKGc9fYaG6ED58gb4
+dump enrollee info:
+40000000fffffffffffffceee61287d9ffffffffffffc0790012616c69626162612d746573742d3732363036010882848b968c9298a43204b048606cdd49d896e0aa00114643304545304536303132303837304439001c42494f5345435f53454355524954595f534d415254444f4f525f503831323933492e96b56f625b098d8196bfd7ee15283f84109e
+channel 1
+[11] ssid:DemoTesting2, mac:a0ab1b784e22, chn:11, auth:wpa2-psk, aes, tkip
+[12] ssid:TestAP, mac:341513209855, chn:11, auth:open, none, none
+channel 1
+
+enter low level!
+mac fc:ee:e6:12:87:d9
+leave low level!
+app_init finished
+start-----------hal
+Enter QC mode
+
+=======================================================
+|                MOC108 BOOTLOADER MENU               |
+|-----------------------------------------------------|
+| Comamnd | Arguments        | Description            |
+|---------+------------------+------------------------|
+| read    | <address> <size> | read flash             |
+|---------+------------------+------------------------|
+| write   | <address>        | write flash            |
+|---------+------------------+------------------------|
+| erase   | <address> <size> | erase flash            |
+|---------+------------------+------------------------|
+| boot    | <mode>           | boot to APP, ATE or QC |
+|---------+------------------+------------------------|
+| reboot  |                  | reboot                 |
+=======================================================
+@ Author  : Snow Yang
+@ Version : 1.1.0
+@ Date    : Nov  3 2017 17:31:24
+$ 
+
+$ enter low level!
+mac fc:ee:e6:12:87:d9
+leave low level!
+app_init finished
+start-----------hal
+Enter QC mode
+
+enter low level!
+mac fc:ee:e6:12:87:d9
+leave low level!
+app_init finished
+start-----------hal
+Enter QC mode
+
+=======================================================
+|                MOC108 BOOTLOADER MENU               |
+|-----------------------------------------------------|
+| Comamnd | Arguments        | Description            |
+|---------+------------------+------------------------|
+| read    | <address> <size> | read flash             |
+|---------+------------------+------------------------|
+| write   | <address>        | write flash            |
+|---------+------------------+------------------------|
+| erase   | <address> <size> | erase flash            |
+|---------+------------------+------------------------|
+| boot    | <mode>           | boot to APP, ATE or QC |
+|---------+------------------+------------------------|
+| reboot  |                  | reboot                 |
+=======================================================
+@ Author  : Snow Yang
+@ Version : 1.1.0
+@ Date    : Nov  3 2017 17:31:24
+$ write 0x13200
+
+Waiting for the file to be sent ... (press 'a' to abort)
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+=======================================================
+|                MOC108 BOOTLOADER MENU               |
+|-----------------------------------------------------|
+| Comamnd | Arguments        | Description            |
+|---------+------------------+------------------------|
+| read    | <address> <size> | read flash             |
+|---------+------------------+------------------------|
+| write   | <address>        | write flash            |
+|---------+------------------+------------------------|
+| erase   | <address> <size> | erase flash            |
+|---------+------------------+------------------------|
+| boot    | <mode>           | boot to APP, ATE or QC |
+|---------+------------------+------------------------|
+| reboot  |                  | reboot                 |
+=======================================================
+@ Author  : Snow Yang
+@ Version : 1.1.0
+@ Date    : Nov  3 2017 17:31:24
+$ boot
+enter low level!
+mac fc:ee:e6:12:87:d9
+leave low level!
+app_init finished
+start-----------hal
+trace config close!!!
+[000004]<V> aos framework init.
+[000014]<I> kv(auto_netmgr) not set, auto_netmgr will be disabled
+[000014]<I> awss version: smarthome-bd18d6d
+awss lib smarthome-bd18d6d
+tpsk: h+YdgRyQfwUdJGcRiOJ7PH1IdnSJy59ITghgUfviNSw=
+Soft_AP_start
+[000024]<D> dump rand(4)+devid(17)+model(28)+secret(40): 859386417 FC0EE0E60120870D9 BIOSEC_SECURITY_SMARTDOOR_P8 Qw91uhrkQzZnOfDGz8nbxuHcKGc9fYaG6ED58gb4
+dump enrollee info:
+40000000fffffffffffffceee61287d9ffffffffffffc0790012616c69626162612d746573742d3732363036010882848b968c9298a43204b048606cdd49d896e0aa00114643304545304536303132303837304439001c42494f5345435f53454355524954595f534d415254444f4f525f503831323933492e96b56f625b098d8196bfd7ee15283f84109e
+channel 1
+[11] ssid:TestAP, mac:341513209855, chn:11, auth:open, none, none
+channel 1
+

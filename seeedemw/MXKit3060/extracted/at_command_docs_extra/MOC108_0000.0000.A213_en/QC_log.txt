@@ -1,0 +1,41 @@
+==== MXCHIP Manufacture Test ====
+Serial Number: 0000.0000.A213
+App CRC: 1B72
+Bootloader Version: 1.1.0
+Library Version: moc108.004
+APP Version: MiCO basic_AT_v2.1.3, build at 13:48:06 Dec 14 2018
+Driver: moc108_wlan
+MAC: FC-EE-E6-05-73-1B
+Scan AP Success:
+  SSID: CMHI-Kktt, RSSI: -30
+  SSID: FAST_1914, RSSI: -33
+  SSID: hytest, RSSI: -33
+  SSID: TP-LINK_5D70, RSSI: -34
+  SSID: Xiaomi_yhb, RSSI: -34
+  SSID: biu, RSSI: -35
+  SSID: AP-008, RSSI: -44
+  SSID: GP_02, RSSI: -45
+  SSID: AP-016, RSSI: -46
+  SSID: Unavailable, RSSI: -49
+  SSID: yhb-wrt, RSSI: -50
+  SSID: AP055, RSSI: -50
+  SSID: H3C_0000FD, RSSI: -52
+  SSID: mxchip-offices, RSSI: -53
+  SSID: , RSSI: -55
+  SSID: AP017, RSSI: -56
+  SSID: mxchip-rd, RSSI: -57
+  SSID: AP003, RSSI: -58
+  SSID: HiWiFi_0DB866, RSSI: -58
+  SSID: mxchip-offices, RSSI: -59
+  SSID: MXCHIP_331E45, RSSI: -60
+  SSID: TP-LINK_5E4666, RSSI: -61
+  SSID: AP033, RSSI: -62
+  SSID: ¡°³ÂÅÊ¡±µÄ iPhone, RSSI: -62
+  SSID: PHILIPS Setup, RSSI: -63
+  SSID: , RSSI: -64
+  SSID: HHKL, RSSI: -68
+  SSID: mxchip-offices, RSSI: -69
+  SSID: mxchip-rd, RSSI: -69
+  SSID: mxchip-rd, RSSI: -69
+  SSID: AAA_BBB, RSSI: -70
+  SSID: LB_023, RSSI: -72

@@ -1,0 +1,34 @@
+
+
+base board: 
+
+    MXCHIP
+    MXKit-Base v1.3
+
+
+core board:
+
+    CORE-110
+    V1.2
+
+
+module board on core board:
+
+    KWH-EMW110 v1.2
+    20171013
+
+
+wifi module on module board:
+
+    MXCHIP(c)
+    FCEEE6128709
+    MODEL EMW110-P
+    CMID ID:2017DP7100
+    0000.0000.A207 K1820
+    FCC ID:...
+
+
+Purchased Mar 2020 from Mouser
+
+
+
