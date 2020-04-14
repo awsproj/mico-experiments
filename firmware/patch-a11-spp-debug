@@ -1,0 +1,186 @@
+commit 0fb6707779670cee7fa5da358858ea0cbd430c4b
+Date:   Mon Apr 13 17:37:10 2020 -0700
+
+    temp change a11 spp inject remote domain and debug connection and transfer.
+
+diff --git a/wifi/station/RemoteTcpClient.c b/wifi/station/RemoteTcpClient.c
+index 0d80c56..959a7e4 100644
+--- a/wifi/station/RemoteTcpClient.c
++++ b/wifi/station/RemoteTcpClient.c
+@@ -35,7 +35,11 @@
+ #define client_log(M, ...) custom_log("TCP client", M, ##__VA_ARGS__)
+ #define client_log_trace() custom_log_trace("TCP client")
+ 
+-#define CLOUD_RETRY  1
++#define CLOUD_RETRY  (5) /*1*/
++
++static char tcp_remote_ip[16] = "0.0.0.0"; /*remote ip address*/
++static int tcp_remote_port = 8000; /*remote port*/
++static int last_connected = 0; /* default not connected */
+ 
+ static bool _wifiConnected = false;
+ static mico_semaphore_t  _wifiConnected_sem = NULL;
+@@ -58,6 +62,32 @@ void clientNotify_WifiStatusHandler(int event, void* arg )
+   return;
+ }
+ 
++static int ip_addr_valid()
++{
++    int valid = 0;
++    int ip_len = strlen(tcp_remote_ip);
++    if ( ip_len > 6 && ip_len < 16 ) {
++        char c1 = tcp_remote_ip[0];
++        if ( c1 >= '1' && c1 <= '9' ) {
++            valid = 1; /* ip address must start with 1-to-9 */
++        }
++    }
++    if (!valid) {
++        application_config_t *userconf = mico_system_context_get_user_data( NULL );
++        if ( userconf != NULL ) {
++            int apnLen = strlen(userconf->remoteServerDomain);
++            if (apnLen >= 7 && apnLen < 16 ) {
++                char c1 = userconf->remoteServerDomain[0];
++                if ( c1 >= '1' && c1 <= '9' ) {
++                    strcpy(tcp_remote_ip, userconf->remoteServerDomain);
++                    valid = 1;
++                }
++            }
++        }
++    }
++    return valid;
++}
++
+ void remoteTcpClient_thread(uint32_t inContext)
+ {
+   client_log_trace();
+@@ -95,13 +125,22 @@ void remoteTcpClient_thread(uint32_t inContext)
+   if( wifi_link.is_connected == true )
+     _wifiConnected = true;
+   
++  client_log("Thread started: Remote TCP client. wifi connected %s", _wifiConnected?"true":"false");
++  
+   while(1) {
+     if(remoteTcpClient_fd == -1 ) {
++      client_log("loop: wifi connected %s remote_fd -1", _wifiConnected?"true":"false");
++      last_connected = 0; /* not connected */
+       if(_wifiConnected == false){
+         require_action_quiet(mico_rtos_get_semaphore(&_wifiConnected_sem, 200000) == kNoErr, Continue, err = kTimeoutErr);
+       }
+       
+-      hostent_content = gethostbyname( (char *)context->appConfig->remoteServerDomain );
++      if ( ! ip_addr_valid() ) {
++          client_log( "loop continue due to domain not right..." );
++          goto ReConnWithDelay;
++      }
++
++      hostent_content = gethostbyname( (char *)tcp_remote_ip /*context->appConfig->remoteServerDomain*/ );
+       require_action_quiet( hostent_content != NULL, exit, err = kNotFoundErr);
+       pptr=hostent_content->h_addr_list;
+       in_addr.s_addr = *(uint32_t *)(*pptr);
+@@ -109,11 +148,12 @@ void remoteTcpClient_thread(uint32_t inContext)
+       remoteTcpClient_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+       addr.sin_family = AF_INET;
+       addr.sin_addr.s_addr = inet_addr(ipstr);
+-      addr.sin_port = htons(context->appConfig->remoteServerPort);
++      addr.sin_port = htons(tcp_remote_port/*context->appConfig->remoteServerPort*/);
+       
+       err = connect(remoteTcpClient_fd, (struct sockaddr *)&addr, sizeof(addr));
+       require_noerr_quiet(err, ReConnWithDelay);
+-      client_log("Remote server connected at port: %d, fd: %d",  context->appConfig->remoteServerPort,
++      client_log("Remote server connected at port: %d, fd: %d",  
++                 tcp_remote_port/*context->appConfig->remoteServerPort*/,
+                  remoteTcpClient_fd);
+       
+       err = socket_queue_create(context, &queue);
+@@ -125,6 +165,10 @@ void remoteTcpClient_thread(uint32_t inContext)
+         goto ReConnWithDelay;
+       }
+     }else{
++      if (last_connected == 0) { /* was last not connected */
++        client_log("loop: wifi connected %s remote_fd ok", _wifiConnected?"true":"false");
++        last_connected = 1; /* connected */
++      }
+       FD_ZERO(&readfds);
+       FD_SET(remoteTcpClient_fd, &readfds);
+       FD_SET(eventFd, &readfds); 
+@@ -132,15 +176,16 @@ void remoteTcpClient_thread(uint32_t inContext)
+       t.tv_usec = 0;
+       select( Max(remoteTcpClient_fd, eventFd) + 1, &readfds, NULL, NULL, &t);
+       /* send UART data */
+-      if (FD_ISSET( eventFd, &readfds )) {// have data 
++      if (FD_ISSET( eventFd, &readfds )) {// have data from uart
++        client_log("loop: wifi connected %s uart has data ...", _wifiConnected?"true":"false");
+         FD_ZERO(&writeSet );
+         FD_SET(remoteTcpClient_fd, &writeSet );
+         t.tv_usec = 100*1000; // max wait 100ms.
+-        select(1 + remoteTcpClient_fd, NULL, &writeSet, NULL, &t);
++        select(1 + remoteTcpClient_fd, NULL, &writeSet, NULL, &t); /* check tcp ready */
+         if ((FD_ISSET(remoteTcpClient_fd, &writeSet )) && 
+             (kNoErr == mico_rtos_pop_from_queue( &queue, &msg, 0))) {
+-           sent_len = write(remoteTcpClient_fd, msg->data, msg->len);
+-           if (sent_len <= 0) {
++          sent_len = write(remoteTcpClient_fd, msg->data, msg->len);
++          if (sent_len <= 0) {
+             len = sizeof(errno);
+             getsockopt(remoteTcpClient_fd, SOL_SOCKET, SO_ERROR, &errno, (socklen_t *)&len);
+       
+@@ -149,10 +194,10 @@ void remoteTcpClient_thread(uint32_t inContext)
+                 client_log("write error, fd: %d, errno %d", remoteTcpClient_fd,errno );
+                 goto ReConnWithDelay;
+             }
+-           } else {
++          } else {
+                     socket_msg_free(msg);
+-                }
+-            }
++          }
++        }
+       }
+       /*recv wlan data using remote client fd*/
+       if (FD_ISSET(remoteTcpClient_fd, &readfds)) {
+@@ -168,6 +213,7 @@ void remoteTcpClient_thread(uint32_t inContext)
+       continue;
+       
+     ReConnWithDelay:
++        client_log("loop: wifi connected %s reconn", _wifiConnected?"true":"false");
+         if (eventFd >= 0) {
+           mico_delete_event_fd(eventFd);
+           eventFd = -1;
+diff --git a/wifi/station/user_cli.c b/wifi/station/user_cli.c
+index a91c2fd..373c7ad 100644
+--- a/wifi/station/user_cli.c
++++ b/wifi/station/user_cli.c
+@@ -31,6 +31,7 @@ static void user_debug_Command(char *pcWriteBuffer, int xWriteBufferLen,
+         } else {
+             cmd_printf("  ApnConf Domain: len %d name <no-print>\r\n", apnLen);
+         }
++        cmd_printf("  User UART baud rate %lu", userconf->USART_BaudRate);
+     }
+     return;
+   }
+diff --git a/wifi/station/user_cli.h b/wifi/station/user_cli.h
+index d00cc49..193b78d 100644
+--- a/wifi/station/user_cli.h
++++ b/wifi/station/user_cli.h
+@@ -23,6 +23,8 @@ extern "C" {
+ #define wlanBufferLen                       1024
+ #define UART_BUFFER_LENGTH                  2048
+ 
++#define DEFAULT_USER_UART_BAUD_RATE           (921600)
++
+ /* Define thread stack size */
+ #define STACK_SIZE_UART_RECV_THREAD           0x2A0
+ #define STACK_SIZE_REMOTE_TCP_CLIENT_THREAD   0x500
+diff --git a/wifi/station/wifi_station_core_api.c b/wifi/station/wifi_station_core_api.c
+index a557e79..f282af2 100644
+--- a/wifi/station/wifi_station_core_api.c
++++ b/wifi/station/wifi_station_core_api.c
+@@ -84,7 +84,7 @@ void appRestoreDefault_callback( void * const user_config_data, uint32_t size )
+     appConfig->configDataVer = CONFIGURATION_VERSION;
+     appConfig->localServerPort = 0;
+     appConfig->localServerEnable = false;
+-    appConfig->USART_BaudRate = 115200;
++    appConfig->USART_BaudRate = DEFAULT_USER_UART_BAUD_RATE;
+     appConfig->remoteServerEnable = true;
+     sprintf( appConfig->remoteServerDomain, DEAFULT_REMOTE_SERVER );
+     appConfig->remoteServerPort = DEFAULT_REMOTE_SERVER_PORT;

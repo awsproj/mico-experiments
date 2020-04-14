@@ -1,0 +1,77 @@
+commit 1b059ac8466f96ac4b334a0697f3ef3e784749b2
+Date:   Mon Apr 13 20:55:57 2020 -0700
+
+    temp change a12 spp turn on test by cli and close connection when test turned off.
+
+diff --git a/wifi/station/RemoteTcpClient.c b/wifi/station/RemoteTcpClient.c
+index 959a7e4..820ea61 100644
+--- a/wifi/station/RemoteTcpClient.c
++++ b/wifi/station/RemoteTcpClient.c
+@@ -41,6 +41,8 @@ static char tcp_remote_ip[16] = "0.0.0.0"; /*remote ip address*/
+ static int tcp_remote_port = 8000; /*remote port*/
+ static int last_connected = 0; /* default not connected */
+ 
++int tcp_client_test_enabled = 0; 
++
+ static bool _wifiConnected = false;
+ static mico_semaphore_t  _wifiConnected_sem = NULL;
+ 
+@@ -126,6 +128,7 @@ void remoteTcpClient_thread(uint32_t inContext)
+     _wifiConnected = true;
+   
+   client_log("Thread started: Remote TCP client. wifi connected %s", _wifiConnected?"true":"false");
++  tcp_client_test_enabled = 0;
+   
+   while(1) {
+     if(remoteTcpClient_fd == -1 ) {
+@@ -135,8 +138,14 @@ void remoteTcpClient_thread(uint32_t inContext)
+         require_action_quiet(mico_rtos_get_semaphore(&_wifiConnected_sem, 200000) == kNoErr, Continue, err = kTimeoutErr);
+       }
+       
++      if ( ! tcp_client_test_enabled ) {
++          client_log( "loop continue due to test not enabled..." );
++          mico_rtos_thread_sleep(15);
++          goto ReConnWithDelay;
++      }
+       if ( ! ip_addr_valid() ) {
+           client_log( "loop continue due to domain not right..." );
++          mico_rtos_thread_sleep(15);
+           goto ReConnWithDelay;
+       }
+ 
+@@ -177,7 +186,6 @@ void remoteTcpClient_thread(uint32_t inContext)
+       select( Max(remoteTcpClient_fd, eventFd) + 1, &readfds, NULL, NULL, &t);
+       /* send UART data */
+       if (FD_ISSET( eventFd, &readfds )) {// have data from uart
+-        client_log("loop: wifi connected %s uart has data ...", _wifiConnected?"true":"false");
+         FD_ZERO(&writeSet );
+         FD_SET(remoteTcpClient_fd, &writeSet );
+         t.tv_usec = 100*1000; // max wait 100ms.
+@@ -207,6 +215,11 @@ void remoteTcpClient_thread(uint32_t inContext)
+           goto ReConnWithDelay;
+         }
+         sppWlanCommandProcess(inDataBuffer, &len, remoteTcpClient_fd, context);
++      } else {
++        if ( ! tcp_client_test_enabled ) {
++          client_log("Test disabled. To close, fd: %d", remoteTcpClient_fd);
++          goto ReConnWithDelay;
++        }
+       }
+ 
+     Continue:    
+diff --git a/wifi/station/user_cli.c b/wifi/station/user_cli.c
+index 373c7ad..017ff4a 100644
+--- a/wifi/station/user_cli.c
++++ b/wifi/station/user_cli.c
+@@ -2,11 +2,7 @@
+  * user-cli.c
+  */
+ 
+-#if defined(TEST_TCP_CLIENT) && (TEST_TCP_CLIENT == 1)
+ extern int tcp_client_test_enabled;
+-#else
+-static int tcp_client_test_enabled = 0;
+-#endif
+ 
+ static void user_debug_Command(char *pcWriteBuffer, int xWriteBufferLen, 
+                                 int argc, char **argv)
