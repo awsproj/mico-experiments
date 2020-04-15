@@ -1,0 +1,163 @@
+commit 9f395424a4998050c64ff1593f18851d5dd2a7c1
+Date:   Wed Apr 15 00:34:24 2020 -0700
+
+    temp change a15 debug uart ack and turn off remote tcp thread.
+
+diff --git a/wifi/station/UartRecv.c b/wifi/station/UartRecv.c
+index 791c66f..b9dbac5 100644
+--- a/wifi/station/UartRecv.c
++++ b/wifi/station/UartRecv.c
+@@ -40,6 +40,8 @@ static uint32_t rx_1440_ok_count = 0; /* count for big packets */
+ static uint32_t last_rx_1440_ok_count = 0; /* what's printed */
+ #endif
+ 
++#define DEBUG_RX_ACK (1)
++
+ static size_t _uart_get_one_packet(uint8_t* buf, int maxlen);
+ 
+ void uartRecv_thread(uint32_t inContext)
+@@ -74,8 +76,20 @@ void uartRecv_thread(uint32_t inContext)
+ #if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
+     empty_count = 0; /* for debug */
+ #endif
++#if defined(DEBUG_RX_ACK) && (DEBUG_RX_ACK)
++    if (recvlen < 8) {
++        int i;
++        for (i=recvlen; i<8; i++) {
++            inDataBuffer[i] = ' ';
++        }
++    }
++    sprintf((char*)&(inDataBuffer[8]), "dsz:%04d\r\n", recvlen);
++    recvlen = 18; /* 8 header, +10 above line */
++    sppWlanCommandProcess(inDataBuffer, &recvlen, -1, NULL);
++#else
+     sppUartCommandProcess(inDataBuffer, recvlen, Context);
+-  }
++#endif
++  } /* while(1) */
+   
+ exit:
+   if(inDataBuffer) free(inDataBuffer);
+@@ -103,9 +117,10 @@ size_t _uart_get_one_packet(uint8_t* inBuf, int inBufLen)
+         return datalen;
+       }
+       #else
+-      /* assemble large 1440 packets */
++      /* assemble large packets */
+       int loops = 0;
+-      int is_1440 = 0; /* 1: large packet header detected */
++      int is_hdr_ok = 0; /* 1: large packet header detected */
++      uint32_t hdr_pkt_len = 0; /* retrieved from header, must be >= 8 */
+       uint32_t rx_sum = 0;
+       uint32_t empty_count = 0;
+       const int max_loops = 24;
+@@ -114,41 +129,55 @@ size_t _uart_get_one_packet(uint8_t* inBuf, int inBufLen)
+         if(datalen){
+           empty_count = 0;
+           MicoUartRecv(UART_FOR_APP, &inBuf[rx_sum], datalen, UART_RECV_TIMEOUT);
+-          if (loops == 0 && datalen >= 8) 
++          if ( (loops == 0 || rx_sum == 0) && datalen >= 8) 
+           {
+-              rx_sum += datalen;
+-              if (rx_sum == inBufLen) { /* 1440 */
+-                uart_recv_log("..r0 loops %d ok", loops);
+-                return rx_sum;
+-              } else if (rx_sum > inBufLen) { /* 1440 */
+-                uart_recv_log("..r1 loops %d overrun", loops);
+-                return rx_sum;
+-              }
+               if ( inBuf[0] == '0' && inBuf[1] == '0') {
+-                is_1440 = 1;
+-                uart_recv_log("..00 hdr ok");
++                  if ( inBuf[4] >= '0' && inBuf[4] <= '9' && 
++                       inBuf[5] >= '0' && inBuf[5] <= '9' && 
++                       inBuf[6] >= '0' && inBuf[6] <= '9' && 
++                       inBuf[7] >= '0' && inBuf[7] <= '9'    )
++                  {
++                      hdr_pkt_len =  (inBuf[4] - '0') * 1000; 
++                      hdr_pkt_len += (inBuf[5] - '0') * 100; 
++                      hdr_pkt_len += (inBuf[6] - '0') * 10; 
++                      hdr_pkt_len += (inBuf[7] - '0'); 
++                      if (hdr_pkt_len <= inBufLen && hdr_pkt_len >= 8) {
++                          is_hdr_ok = 1;
++                      }
++                  }
++              }
++              if ( is_hdr_ok ) {
++                  uart_recv_log("..00 hdr ok pkt len %lu", hdr_pkt_len);
+               } else {
+-                uart_recv_log("..01 hdr no found");
++                  uart_recv_log("..01 hdr no found");
+               }
+-          } else if (is_1440) {
+               rx_sum += datalen;
+-              if (rx_sum == inBufLen) { /* 1440 */
+-                uart_recv_log("..r2 loops %d ok", loops);
+-                return rx_sum;
+-              } else if (rx_sum > inBufLen) { /* 1440 */
+-                uart_recv_log("..r3 loops %d overrun", loops);
+-                return rx_sum;
++          } else if (is_hdr_ok) {
++              rx_sum += datalen;
++              if (rx_sum == hdr_pkt_len) {
++                  uart_recv_log("..r2 loops %d ok", loops);
++                  return rx_sum;
++              } else if (rx_sum > hdr_pkt_len) {
++                  uart_recv_log("..r3 loops %d overrun", loops);
++                  return rx_sum;
+               }
+           } else {
+               rx_sum += datalen;
+-              uart_recv_log("..r4 %lu loops %d small pkt", rx_sum, loops);
+-              return rx_sum;
++              uart_recv_log("..a4 datalen %lu loops %d", datalen, loops);
+           }
+         }else{ /* datalen == 0 */
+           empty_count ++;
+-          if (empty_count > max_loops - 2) { /* 6: idle for 60ms */
++          uint32_t empty_break_count = 6; /* 6: idle for 60ms */
++          if (is_hdr_ok) {
++              /* testing showed on PC that a good packet gets ack in 16ms. 
++               * use 2.5 x as timeout
++               */
++              empty_break_count = 3; /* need to be turned. */
++          }
++          if (empty_count > max_loops - 2 || empty_count > max_loops/2 || 
++                                          empty_count > empty_break_count) { 
+             if (rx_sum) {
+-                uart_recv_log("..r5 %lu loops %d empty_count %lu idle", 
++                uart_recv_log("..r5 rx_sum %lu loops %d empty_count %lu idle", 
+                               rx_sum, loops, empty_count);
+                 return rx_sum;
+             }
+@@ -158,7 +187,7 @@ size_t _uart_get_one_packet(uint8_t* inBuf, int inBufLen)
+         }
+       } /* for loops */
+       if (rx_sum) {
+-        uart_recv_log("..r6 %lu loops %d loop out", rx_sum, loops);
++        uart_recv_log("..r6 rx_sum %lu loops %d loop out", rx_sum, loops);
+         return rx_sum;
+       }
+       #endif
+diff --git a/wifi/station/wifi_station_core_api.c b/wifi/station/wifi_station_core_api.c
+index 80b68cf..289b5d4 100644
+--- a/wifi/station/wifi_station_core_api.c
++++ b/wifi/station/wifi_station_core_api.c
+@@ -43,6 +43,8 @@ extern void uartRecv_thread( uint32_t inContext );
+ extern void remoteTcpClient_thread( uint32_t inContext );
+ #endif
+ 
++#define DEBUG_ENABLE_REMOTE_TCP_SERVER (0) /* 1: enable. 0: disable */
++
+ static void micoNotify_ConnectFailedHandler(OSStatus err, void* inContext)
+ {
+   wifi_station_log("join Wlan failed Err: %d", err);
+@@ -187,7 +189,7 @@ int application_start( void )
+             wifi_station_log("ERROR: Unable to start the uart recv thread.") );
+ 
+     /* Remote TCP client thread */
+-    if ( app_context->appConfig->remoteServerEnable == true )
++    if ( app_context->appConfig->remoteServerEnable == true && DEBUG_ENABLE_REMOTE_TCP_SERVER )
+     {
+         err = mico_rtos_create_thread( NULL, MICO_APPLICATION_PRIORITY, 
+                                        "Remote Client", remoteTcpClient_thread,
