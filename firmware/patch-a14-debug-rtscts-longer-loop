@@ -1,0 +1,41 @@
+commit 196c61936b8880dd93037afe210460c5b9b2ef97
+Date:   Tue Apr 14 19:23:16 2020 -0700
+
+    temp change a14 debug rts-cts and longer loop time
+
+diff --git a/wifi/station/UartRecv.c b/wifi/station/UartRecv.c
+index 3d8a8e0..791c66f 100644
+--- a/wifi/station/UartRecv.c
++++ b/wifi/station/UartRecv.c
+@@ -108,7 +108,8 @@ size_t _uart_get_one_packet(uint8_t* inBuf, int inBufLen)
+       int is_1440 = 0; /* 1: large packet header detected */
+       uint32_t rx_sum = 0;
+       uint32_t empty_count = 0;
+-      for (loops = 0; loops < 8; loops ++) {
++      const int max_loops = 24;
++      for (loops = 0; loops < max_loops; loops ++) {
+         datalen = MicoUartGetLengthInBuffer( UART_FOR_APP );
+         if(datalen){
+           empty_count = 0;
+@@ -145,7 +146,7 @@ size_t _uart_get_one_packet(uint8_t* inBuf, int inBufLen)
+           }
+         }else{ /* datalen == 0 */
+           empty_count ++;
+-          if (empty_count > 6) { /* 6: idle for 60ms */
++          if (empty_count > max_loops - 2) { /* 6: idle for 60ms */
+             if (rx_sum) {
+                 uart_recv_log("..r5 %lu loops %d empty_count %lu idle", 
+                               rx_sum, loops, empty_count);
+diff --git a/wifi/station/wifi_station_core_api.c b/wifi/station/wifi_station_core_api.c
+index 09c542a..80b68cf 100644
+--- a/wifi/station/wifi_station_core_api.c
++++ b/wifi/station/wifi_station_core_api.c
+@@ -173,7 +173,7 @@ int application_start( void )
+     uart_config.data_width = DATA_WIDTH_8BIT;
+     uart_config.parity = NO_PARITY;
+     uart_config.stop_bits = STOP_BITS_1;
+-    uart_config.flow_control = FLOW_CONTROL_DISABLED;
++    uart_config.flow_control = FLOW_CONTROL_CTS_RTS/*FLOW_CONTROL_DISABLED*/;
+     if ( mico_context->micoSystemConfig.mcuPowerSaveEnable == true )
+         uart_config.flags = UART_WAKEUP_ENABLE;
+     else

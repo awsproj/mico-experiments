@@ -35,7 +35,7 @@ _cfg_uart_baudrate1 = 921600 # 115200 default
 _cfg_uart_baudrate2 = 921600 # could use 921600
 _cfg_uart_baudrate = _cfg_uart_baudrate1 # init to default
 
-_cfg_hw_ctsrts = False # True to set rts line and check cts line
+_cfg_hw_ctsrts = True # True to set rts line and check cts line
 _var_hw_cts_count_high = 0
 _var_hw_cts_count_low = 0
 _cfg_hw_debug_cts = False
