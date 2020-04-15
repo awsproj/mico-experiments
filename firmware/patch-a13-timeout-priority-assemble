@@ -1,0 +1,213 @@
+commit 0a4eee7981e42c1406af82581a7d7197538ae7ad
+Date:   Tue Apr 14 18:02:57 2020 -0700
+
+    temp change a13 debug uart timeout 50ms, uart recv priority 5, assemble packets, 1440 packets
+
+diff --git a/wifi/station/RemoteTcpClient.c b/wifi/station/RemoteTcpClient.c
+index 820ea61..b331004 100644
+--- a/wifi/station/RemoteTcpClient.c
++++ b/wifi/station/RemoteTcpClient.c
+@@ -118,7 +118,7 @@ void remoteTcpClient_thread(uint32_t inContext)
+   err = mico_system_notify_register( mico_notify_WIFI_STATUS_CHANGED, (void *)clientNotify_WifiStatusHandler, NULL );
+   require_noerr( err, exit ); 
+   
+-  inDataBuffer = malloc(wlanBufferLen);
++  inDataBuffer = malloc(REMOTE_TCP_WLAN_BUFFER_LEN/*wlanBufferLen*/);
+   require_action(inDataBuffer, exit, err = kNoMemoryErr);
+   
+   err = micoWlanGetLinkStatus( &wifi_link );
+@@ -209,7 +209,8 @@ void remoteTcpClient_thread(uint32_t inContext)
+       }
+       /*recv wlan data using remote client fd*/
+       if (FD_ISSET(remoteTcpClient_fd, &readfds)) {
+-        len = recv(remoteTcpClient_fd, inDataBuffer, wlanBufferLen, 0);
++        len = recv(remoteTcpClient_fd, inDataBuffer, 
++                    REMOTE_TCP_WLAN_BUFFER_LEN/*wlanBufferLen*/, 0);
+         if(len <= 0) {
+           client_log("Remote client closed, fd: %d", remoteTcpClient_fd);
+           goto ReConnWithDelay;
+diff --git a/wifi/station/UartRecv.c b/wifi/station/UartRecv.c
+index 25ab86f..3d8a8e0 100644
+--- a/wifi/station/UartRecv.c
++++ b/wifi/station/UartRecv.c
+@@ -34,6 +34,12 @@
+ #define uart_recv_log(M, ...) custom_log("UART RECV", M, ##__VA_ARGS__)
+ #define uart_recv_log_trace() custom_log_trace("UART RECV")
+ 
++#define DEBUG_RX_OK_COUNT (0)
++#if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
++static uint32_t rx_1440_ok_count = 0; /* count for big packets */
++static uint32_t last_rx_1440_ok_count = 0; /* what's printed */
++#endif
++
+ static size_t _uart_get_one_packet(uint8_t* buf, int maxlen);
+ 
+ void uartRecv_thread(uint32_t inContext)
+@@ -46,10 +52,28 @@ void uartRecv_thread(uint32_t inContext)
+   inDataBuffer = malloc(UART_ONE_PACKAGE_LENGTH);
+   require(inDataBuffer, exit);
+   
++#if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
++  rx_1440_ok_count = last_rx_1440_ok_count = 0; /* for debug */
++  uint32_t empty_count = 0; /* for debug */
++#endif
+   while(1) {
+     recvlen = _uart_get_one_packet(inDataBuffer, UART_ONE_PACKAGE_LENGTH);
++#if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
++    if (recvlen <= 0) { /* for debug */
++      empty_count ++;
++      if ( (empty_count % 200) == 0 ) {
++        if ( last_rx_1440_ok_count != rx_1440_ok_count ) {
++          uart_recv_log("rx_ok_count %lu", rx_1440_ok_count);
++          last_rx_1440_ok_count = rx_1440_ok_count;
++        }
++      }
++    }
++#endif
+     if (recvlen <= 0)
+       continue; 
++#if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
++    empty_count = 0; /* for debug */
++#endif
+     sppUartCommandProcess(inDataBuffer, recvlen, Context);
+   }
+   
+@@ -64,22 +88,81 @@ exit:
+ size_t _uart_get_one_packet(uint8_t* inBuf, int inBufLen)
+ {
+   uart_recv_log_trace();
+-
+-  int datalen;
+-  
++  uint32_t datalen;
+   while(1) {
+     if( MicoUartRecv( UART_FOR_APP, inBuf, inBufLen, UART_RECV_TIMEOUT) == kNoErr){
++#if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
++      rx_1440_ok_count ++; /* for debug */
++#endif
+       return inBufLen;
++    } else {
++      #if 0
++      datalen = MicoUartGetLengthInBuffer( UART_FOR_APP );
++      if(datalen){
++        MicoUartRecv(UART_FOR_APP, inBuf, datalen, UART_RECV_TIMEOUT);
++        return datalen;
++      }
++      #else
++      /* assemble large 1440 packets */
++      int loops = 0;
++      int is_1440 = 0; /* 1: large packet header detected */
++      uint32_t rx_sum = 0;
++      uint32_t empty_count = 0;
++      for (loops = 0; loops < 8; loops ++) {
++        datalen = MicoUartGetLengthInBuffer( UART_FOR_APP );
++        if(datalen){
++          empty_count = 0;
++          MicoUartRecv(UART_FOR_APP, &inBuf[rx_sum], datalen, UART_RECV_TIMEOUT);
++          if (loops == 0 && datalen >= 8) 
++          {
++              rx_sum += datalen;
++              if (rx_sum == inBufLen) { /* 1440 */
++                uart_recv_log("..r0 loops %d ok", loops);
++                return rx_sum;
++              } else if (rx_sum > inBufLen) { /* 1440 */
++                uart_recv_log("..r1 loops %d overrun", loops);
++                return rx_sum;
++              }
++              if ( inBuf[0] == '0' && inBuf[1] == '0') {
++                is_1440 = 1;
++                uart_recv_log("..00 hdr ok");
++              } else {
++                uart_recv_log("..01 hdr no found");
++              }
++          } else if (is_1440) {
++              rx_sum += datalen;
++              if (rx_sum == inBufLen) { /* 1440 */
++                uart_recv_log("..r2 loops %d ok", loops);
++                return rx_sum;
++              } else if (rx_sum > inBufLen) { /* 1440 */
++                uart_recv_log("..r3 loops %d overrun", loops);
++                return rx_sum;
++              }
++          } else {
++              rx_sum += datalen;
++              uart_recv_log("..r4 %lu loops %d small pkt", rx_sum, loops);
++              return rx_sum;
++          }
++        }else{ /* datalen == 0 */
++          empty_count ++;
++          if (empty_count > 6) { /* 6: idle for 60ms */
++            if (rx_sum) {
++                uart_recv_log("..r5 %lu loops %d empty_count %lu idle", 
++                              rx_sum, loops, empty_count);
++                return rx_sum;
++            }
++            break;
++          }
++          mico_rtos_thread_msleep(10); /* wait for 10ms */
++        }
++      } /* for loops */
++      if (rx_sum) {
++        uart_recv_log("..r6 %lu loops %d loop out", rx_sum, loops);
++        return rx_sum;
++      }
++      #endif
+     }
+-   else{
+-     datalen = MicoUartGetLengthInBuffer( UART_FOR_APP );
+-     if(datalen){
+-       MicoUartRecv(UART_FOR_APP, inBuf, datalen, UART_RECV_TIMEOUT);
+-       return datalen;
+-     }
+-   }
+   }
+-  
+ }
+ 
+ 
+diff --git a/wifi/station/station.mk b/wifi/station/station.mk
+index 38df1d3..81f5ace 100644
+--- a/wifi/station/station.mk
++++ b/wifi/station/station.mk
+@@ -30,7 +30,8 @@ $(NAME)_SOURCES := wifi_station_core_api.c
+ $(NAME)_SOURCES += wifi_scan.c
+ 
+ 
+-TEST1_TCP_CLIENT := no # yes or no
++# yes or no
++TEST1_TCP_CLIENT := no
+ 
+ ifeq ($(TEST1_TCP_CLIENT),yes)
+  $(NAME)_CFLAGS += -DTEST_TCP_CLIENT=1
+diff --git a/wifi/station/user_cli.h b/wifi/station/user_cli.h
+index 193b78d..9b1aa5b 100644
+--- a/wifi/station/user_cli.h
++++ b/wifi/station/user_cli.h
+@@ -18,10 +18,10 @@ extern "C" {
+ #define MAX_QUEUE_NUM                       6  // 1 remote client, 5 local server
+ #define MAX_QUEUE_LENGTH                    8  // each queue max 8 msg
+ 
+-#define UART_RECV_TIMEOUT                   500
+-#define UART_ONE_PACKAGE_LENGTH             1024
+-#define wlanBufferLen                       1024
+-#define UART_BUFFER_LENGTH                  2048
++#define UART_RECV_TIMEOUT                   (50)   /*500*/
++#define UART_ONE_PACKAGE_LENGTH             (1024) /*(1440)*/  /*1024*/
++#define REMOTE_TCP_WLAN_BUFFER_LEN          (1024) /*(1440)*/  /*1024  wlanBufferLen */
++#define UART_BUFFER_LENGTH                  (2048) /*(2884)*/  /*2048*/
+ 
+ #define DEFAULT_USER_UART_BAUD_RATE           (921600)
+ 
+diff --git a/wifi/station/wifi_station_core_api.c b/wifi/station/wifi_station_core_api.c
+index f282af2..09c542a 100644
+--- a/wifi/station/wifi_station_core_api.c
++++ b/wifi/station/wifi_station_core_api.c
+@@ -181,7 +181,7 @@ int application_start( void )
+ 
+     ring_buffer_init( (ring_buffer_t *) &rx_buffer, (uint8_t *) rx_data, UART_BUFFER_LENGTH );
+     MicoUartInitialize( UART_FOR_APP, &uart_config, (ring_buffer_t *) &rx_buffer );
+-    err = mico_rtos_create_thread( NULL, MICO_APPLICATION_PRIORITY, "UART Recv", uartRecv_thread,
++    err = mico_rtos_create_thread( NULL, 5/*MICO_APPLICATION_PRIORITY*/, "UART Recv", uartRecv_thread,
+                                    STACK_SIZE_UART_RECV_THREAD, (mico_thread_arg_t)app_context );
+     require_noerr_action( err, exit, 
+             wifi_station_log("ERROR: Unable to start the uart recv thread.") );
