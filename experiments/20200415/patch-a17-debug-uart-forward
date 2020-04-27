@@ -1,0 +1,59 @@
+commit 2330184893b86b6f952f9a327ca2232d16b553e0
+Date:   Wed Apr 15 20:30:48 2020 -0700
+
+    temp change a17 uart packets decoded and forwarded to the remote server
+
+diff --git a/wifi/station/UartRecv.c b/wifi/station/UartRecv.c
+index 51fb818..d428df2 100644
+--- a/wifi/station/UartRecv.c
++++ b/wifi/station/UartRecv.c
+@@ -49,7 +49,7 @@ void uartRecv_thread(uint32_t inContext)
+ {
+   uart_recv_log_trace();
+   app_context_t *Context = (app_context_t *)inContext;
+-  int recvlen, recv_is_whole;
++  int recvlen, recv_is_whole, recv_is_valid, ack_pkt_len;
+   uint8_t *inDataBuffer;
+   
+   inDataBuffer = malloc(UART_ONE_PACKAGE_LENGTH);
+@@ -61,7 +61,7 @@ void uartRecv_thread(uint32_t inContext)
+   #endif
+ 
+   while(1) {
+-    recv_is_whole = 0;
++    recv_is_whole = recv_is_valid = 0;
+     recvlen = _uart_get_one_packet(inDataBuffer, UART_ONE_PACKAGE_LENGTH, &recv_is_whole);
+     #if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
+     if (recvlen <= 0) { /* for debug */
+@@ -79,19 +79,26 @@ void uartRecv_thread(uint32_t inContext)
+     #if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
+     empty_count = 0; /* for debug */
+     #endif
+-#if defined(DEBUG_RX_ACK) && (DEBUG_RX_ACK)
++
++    #if defined(DEBUG_RX_ACK) && (DEBUG_RX_ACK)
++    recv_is_valid = uart_pkt_is_valid((uart_pkt_t*)inDataBuffer, recvlen, NULL);
++    if (recv_is_valid) {
++        sppUartCommandProcess(inDataBuffer, recvlen, Context);
++    }
+     if (recvlen < UART_PKT_HDR_LEN) {
+         int i;
+         for (i=recvlen; i<UART_PKT_HDR_LEN; i++) {
+             inDataBuffer[i] = ' ';
+         }
+     }
+-    sprintf((char*)&(inDataBuffer[UART_PKT_HDR_LEN]), "usz:%04d\r\n", recvlen);
+-    recvlen = UART_PKT_HDR_LEN + 10; /* header, +10 above line */
++    ack_pkt_len = sprintf((char*)&(inDataBuffer[UART_PKT_HDR_LEN]), 
++                          "usz:%04d %d %d\r\n", 
++                          recvlen, recv_is_whole, recv_is_valid);
++    recvlen = UART_PKT_HDR_LEN + (ack_pkt_len>0?ack_pkt_len:0); /* header, + above */
+     sppWlanCommandProcess(inDataBuffer, &recvlen, -1, NULL);
+-#else
++    #else
+     sppUartCommandProcess(inDataBuffer, recvlen, Context);
+-#endif
++    #endif
+   } /* while(1) */
+   
+ exit:

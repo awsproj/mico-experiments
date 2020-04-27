@@ -1,0 +1,267 @@
+commit a29e8a6a240f7958127364e869604af84a896b2c
+Date:   Wed Apr 15 11:22:26 2020 -0700
+
+    temp change a16 debug uart pkt format
+
+diff --git a/wifi/station/RemoteTcpClient.c b/wifi/station/RemoteTcpClient.c
+index b331004..2237a9a 100644
+--- a/wifi/station/RemoteTcpClient.c
++++ b/wifi/station/RemoteTcpClient.c
+@@ -215,7 +215,9 @@ void remoteTcpClient_thread(uint32_t inContext)
+           client_log("Remote client closed, fd: %d", remoteTcpClient_fd);
+           goto ReConnWithDelay;
+         }
++        #if defined(DEBUG_ENABLE_REMOTE_TCP_FORWARD) && (DEBUG_ENABLE_REMOTE_TCP_FORWARD)
+         sppWlanCommandProcess(inDataBuffer, &len, remoteTcpClient_fd, context);
++        #endif
+       } else {
+         if ( ! tcp_client_test_enabled ) {
+           client_log("Test disabled. To close, fd: %d", remoteTcpClient_fd);
+diff --git a/wifi/station/UartRecv.c b/wifi/station/UartRecv.c
+index b9dbac5..51fb818 100644
+--- a/wifi/station/UartRecv.c
++++ b/wifi/station/UartRecv.c
+@@ -40,27 +40,30 @@ static uint32_t rx_1440_ok_count = 0; /* count for big packets */
+ static uint32_t last_rx_1440_ok_count = 0; /* what's printed */
+ #endif
+ 
+-#define DEBUG_RX_ACK (1)
++#include "user_pkt.h"
+ 
+-static size_t _uart_get_one_packet(uint8_t* buf, int maxlen);
++
++static size_t _uart_get_one_packet(uint8_t* buf, int maxlen, int *recv_whole);
+ 
+ void uartRecv_thread(uint32_t inContext)
+ {
+   uart_recv_log_trace();
+   app_context_t *Context = (app_context_t *)inContext;
+-  int recvlen;
++  int recvlen, recv_is_whole;
+   uint8_t *inDataBuffer;
+   
+   inDataBuffer = malloc(UART_ONE_PACKAGE_LENGTH);
+   require(inDataBuffer, exit);
+   
+-#if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
++  #if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
+   rx_1440_ok_count = last_rx_1440_ok_count = 0; /* for debug */
+   uint32_t empty_count = 0; /* for debug */
+-#endif
++  #endif
++
+   while(1) {
+-    recvlen = _uart_get_one_packet(inDataBuffer, UART_ONE_PACKAGE_LENGTH);
+-#if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
++    recv_is_whole = 0;
++    recvlen = _uart_get_one_packet(inDataBuffer, UART_ONE_PACKAGE_LENGTH, &recv_is_whole);
++    #if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
+     if (recvlen <= 0) { /* for debug */
+       empty_count ++;
+       if ( (empty_count % 200) == 0 ) {
+@@ -70,21 +73,21 @@ void uartRecv_thread(uint32_t inContext)
+         }
+       }
+     }
+-#endif
++    #endif
+     if (recvlen <= 0)
+       continue; 
+-#if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
++    #if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
+     empty_count = 0; /* for debug */
+-#endif
++    #endif
+ #if defined(DEBUG_RX_ACK) && (DEBUG_RX_ACK)
+-    if (recvlen < 8) {
++    if (recvlen < UART_PKT_HDR_LEN) {
+         int i;
+-        for (i=recvlen; i<8; i++) {
++        for (i=recvlen; i<UART_PKT_HDR_LEN; i++) {
+             inDataBuffer[i] = ' ';
+         }
+     }
+-    sprintf((char*)&(inDataBuffer[8]), "dsz:%04d\r\n", recvlen);
+-    recvlen = 18; /* 8 header, +10 above line */
++    sprintf((char*)&(inDataBuffer[UART_PKT_HDR_LEN]), "usz:%04d\r\n", recvlen);
++    recvlen = UART_PKT_HDR_LEN + 10; /* header, +10 above line */
+     sppWlanCommandProcess(inDataBuffer, &recvlen, -1, NULL);
+ #else
+     sppUartCommandProcess(inDataBuffer, recvlen, Context);
+@@ -99,15 +102,17 @@ exit:
+ /* Packet format: BB 00 CMD(2B) Status(2B) datalen(2B) data(x) checksum(2B)
+ * copy to buf, return len = datalen+10
+ */
+-size_t _uart_get_one_packet(uint8_t* inBuf, int inBufLen)
++size_t _uart_get_one_packet(uint8_t* inBuf, int inBufLen, int *is_whole)
+ {
+   uart_recv_log_trace();
+   uint32_t datalen;
++  if (is_whole) *is_whole = 0; /* 0: default assembled */
+   while(1) {
+     if( MicoUartRecv( UART_FOR_APP, inBuf, inBufLen, UART_RECV_TIMEOUT) == kNoErr){
+ #if defined(DEBUG_RX_OK_COUNT) && (DEBUG_RX_OK_COUNT)
+       rx_1440_ok_count ++; /* for debug */
+ #endif
++      if (is_whole) *is_whole = 1; /* is whole. need the caller to validate. */
+       return inBufLen;
+     } else {
+       #if 0
+@@ -129,22 +134,10 @@ size_t _uart_get_one_packet(uint8_t* inBuf, int inBufLen)
+         if(datalen){
+           empty_count = 0;
+           MicoUartRecv(UART_FOR_APP, &inBuf[rx_sum], datalen, UART_RECV_TIMEOUT);
+-          if ( (loops == 0 || rx_sum == 0) && datalen >= 8) 
+-          {
+-              if ( inBuf[0] == '0' && inBuf[1] == '0') {
+-                  if ( inBuf[4] >= '0' && inBuf[4] <= '9' && 
+-                       inBuf[5] >= '0' && inBuf[5] <= '9' && 
+-                       inBuf[6] >= '0' && inBuf[6] <= '9' && 
+-                       inBuf[7] >= '0' && inBuf[7] <= '9'    )
+-                  {
+-                      hdr_pkt_len =  (inBuf[4] - '0') * 1000; 
+-                      hdr_pkt_len += (inBuf[5] - '0') * 100; 
+-                      hdr_pkt_len += (inBuf[6] - '0') * 10; 
+-                      hdr_pkt_len += (inBuf[7] - '0'); 
+-                      if (hdr_pkt_len <= inBufLen && hdr_pkt_len >= 8) {
+-                          is_hdr_ok = 1;
+-                      }
+-                  }
++          if ( loops == 0 || rx_sum == 0 ) {
++              int h_ok = uart_pkt_is_valid( (uart_pkt_t*)inBuf, datalen, &hdr_pkt_len);
++              if ( h_ok && hdr_pkt_len < inBufLen && hdr_pkt_len >= UART_PKT_HDR_LEN ) {
++                  is_hdr_ok = 1;
+               }
+               if ( is_hdr_ok ) {
+                   uart_recv_log("..00 hdr ok pkt len %lu", hdr_pkt_len);
+@@ -152,6 +145,15 @@ size_t _uart_get_one_packet(uint8_t* inBuf, int inBufLen)
+                   uart_recv_log("..01 hdr no found");
+               }
+               rx_sum += datalen;
++              if ( is_hdr_ok ) {
++                  if ( rx_sum == hdr_pkt_len ) {
++                      uart_recv_log("..r1 loops %d ok", loops);
++                      return rx_sum;
++                  } else if ( rx_sum > hdr_pkt_len ) {
++                      uart_recv_log("..r1 loops %d overrun", loops);
++                      return rx_sum;
++                  }
++              }
+           } else if (is_hdr_ok) {
+               rx_sum += datalen;
+               if (rx_sum == hdr_pkt_len) {
+diff --git a/wifi/station/station.mk b/wifi/station/station.mk
+index 81f5ace..3c799c7 100644
+--- a/wifi/station/station.mk
++++ b/wifi/station/station.mk
+@@ -41,6 +41,8 @@ else
+  $(NAME)_SOURCES += RemoteTcpClient.c SppProtocol.c UartRecv.c
+ endif
+ 
++$(NAME)_SOURCES += user_pkt.c
++
+ 
+ wifi_station_core_api.c: user_cli.c
+ 
+diff --git a/wifi/station/user_pkt.c b/wifi/station/user_pkt.c
+new file mode 100644
+index 0000000..3c8c711
+--- /dev/null
++++ b/wifi/station/user_pkt.c
+@@ -0,0 +1,31 @@
++/*
++ * user_pkt.c
++ */
++
++#include "user_pkt.h"
++
++int uart_pkt_is_valid(uart_pkt_t *buf, uint32_t buflen, uint32_t *hdrpktlen)
++{
++    if (!buf) return 0; /* invalid */
++    if ( buflen < UART_PKT_HDR_LEN ) return 0; /* invalid */
++    int is_hdr_ok = 0;
++    if ( buf->header.pkt_type[0] == '0' && buf->header.pkt_type[1] == '0') {
++        if ( buf->header.pkt_len[0] >= '0' && buf->header.pkt_len[0] <= '9' && 
++             buf->header.pkt_len[1] >= '0' && buf->header.pkt_len[1] <= '9' && 
++             buf->header.pkt_len[2] >= '0' && buf->header.pkt_len[2] <= '9' && 
++             buf->header.pkt_len[3] >= '0' && buf->header.pkt_len[3] <= '9'    )
++        {
++            uint32_t hdr_pkt_len;
++            hdr_pkt_len =  (buf->header.pkt_len[0] - '0') * 1000; 
++            hdr_pkt_len += (buf->header.pkt_len[1] - '0') * 100; 
++            hdr_pkt_len += (buf->header.pkt_len[2] - '0') * 10; 
++            hdr_pkt_len += (buf->header.pkt_len[3] - '0'); 
++            if (hdr_pkt_len <= buflen && hdr_pkt_len >= UART_PKT_HDR_LEN) {
++                is_hdr_ok = 1;
++                if (hdrpktlen) *hdrpktlen = hdr_pkt_len;
++            }
++        }
++    }
++    return is_hdr_ok;
++}
++
+diff --git a/wifi/station/user_pkt.h b/wifi/station/user_pkt.h
+new file mode 100644
+index 0000000..1d370e7
+--- /dev/null
++++ b/wifi/station/user_pkt.h
+@@ -0,0 +1,45 @@
++/*
++ * user-pkt.h
++ */
++
++#pragma once
++
++#include "common.h"
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++/* start the remote tcp server connection. disable when debugging uart locally */
++#define DEBUG_ENABLE_REMOTE_TCP_SERVER (1) /* 1: enable. 0: disable. default 1. */
++
++/* forwarding remote tcp server packets to uart. disable when ack uart locally */
++#define DEBUG_ENABLE_REMOTE_TCP_FORWARD (0) /* 1: enable. 0: disable. */
++
++/* ?? */
++#define DEBUG_RX_ACK (1)
++
++
++/* packet format */
++typedef struct uart_pkt_hdr_s {
++        uint8_t pkt_type[2]; /* ascii 00 */
++        uint8_t pkt_seqn[2]; /* ascii 01 to 99. 00 for reset. */
++        uint8_t pkt_len[4];  /* ascii pkt len, incl hdr 10 bytes. */
++        uint8_t pkt_data_preamble[2]; /* ascii -- for data, or a1 for seq reset */
++    } uart_pkt_hdr_t;
++typedef struct uart_pkt_s {
++    uart_pkt_hdr_t header;
++    uint8_t data[1];
++} uart_pkt_t;
++
++
++/* packet utilities */
++#define UART_PKT_HDR_LEN sizeof(uart_pkt_hdr_t)
++
++extern int uart_pkt_is_valid(uart_pkt_t *buf, uint32_t buflen, uint32_t *hdrpktlen);
++
++
++#ifdef __cplusplus
++} /*extern "C" */
++#endif
++
+diff --git a/wifi/station/wifi_station_core_api.c b/wifi/station/wifi_station_core_api.c
+index 289b5d4..bee099c 100644
+--- a/wifi/station/wifi_station_core_api.c
++++ b/wifi/station/wifi_station_core_api.c
+@@ -43,7 +43,8 @@ extern void uartRecv_thread( uint32_t inContext );
+ extern void remoteTcpClient_thread( uint32_t inContext );
+ #endif
+ 
+-#define DEBUG_ENABLE_REMOTE_TCP_SERVER (0) /* 1: enable. 0: disable */
++#include "user_pkt.h"
++
+ 
+ static void micoNotify_ConnectFailedHandler(OSStatus err, void* inContext)
+ {
